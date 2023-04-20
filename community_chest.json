@@ -1,0 +1,81 @@
+[
+    {
+        "type": "earn",
+        "amount": 25,
+        "text": "Commisson d'expert immobilier. Recevez 25 $"
+    },
+    {
+        "type": "earn",
+        "amount": 100,
+        "text": "Votre placement vous rapporte. Recevez 100 $"
+    },
+    {
+        "type": "earn",
+        "amount": 100,
+        "text": "Votre assurance vie vous rapporte. Recevez 100 $"
+    },
+    {
+        "type": "earn",
+        "amount": 20,
+        "text": "Les impots vous rembousent. Recevez 20 $"
+    },
+    {
+        "type": "pay",
+        "amount": 100,
+        "text": "Frais d'hospitalisation. Payez 25 $"
+    },
+    {
+        "type": "earn",
+        "amount": 200,
+        "text": "Erreur de la banque en votre faveur. Recevez 200 $"
+    },
+    {
+        "type": "pay",
+        "amount": 50,
+        "text": "Viste chez le médecin. Payez 50 $"
+    },
+    {
+        "type": "earn",
+        "amount": 100,
+        "text": "Vous héritez de 100 $"
+    },
+    {
+        "type": "earn",
+        "amount": 10,
+        "text": "Vous avez gagné le deuxième prix de beauté. Recevez 10 $"
+    },
+    {
+        "type": "earn",
+        "amount": 50,
+        "text": "La vente de votre stock vous rapporte 50 $"
+    },
+    {
+        "type": "pay",
+        "amount": 50,
+        "text": "Frais de scolarité. Payez 50 $"
+    },
+    {
+        "type": "renovations",
+        "text": "Vous devez faire des travaux sur vos propriétés. Versez 40 $ par maison et 115 $ par hôtel que vous possédez.",
+        "hotel": 115,
+        "house": 40
+    },
+    {
+        "type": "goto_prison",
+        "text": "Allez en prison. Allez tout droit en prison. Ne passez pas par la case départ, ne recevez pas 200 $"
+    },
+    {
+        "type": "earn_from_everyone",
+        "text": "C'est votre anniversaire, chaque joueur doit vous donner 10 $",
+        "amount": 10
+    },
+    {
+        "type": "goto",
+        "text": "Avancez jusqu'à la case depart (Recevez 200 $)",
+        "position": 0
+    },
+    {
+        "type": "get_out_of_prison",
+        "text": "Vous êtes libérés de prison, cette carte peut être conservée jusqu'à ce qu'elle soit utilisée ou vendue."
+    }
+]

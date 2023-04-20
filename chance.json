@@ -1,0 +1,73 @@
+[
+    {
+        "type": "earn",
+        "amount": 150,
+        "text": "Votre immeuble et votre prêt rapportent. Touchez 150 $"
+    },
+    {
+        "type": "earn",
+        "amount": 50,
+        "text": "La banque vous verse un dividende de 50 $"
+    },
+    {
+        "type": "pay",
+        "amount": 15,
+        "text": "Amende pour excès de vitesse. Payez 15 $"
+    },
+    {
+        "type": "move_back",
+        "text": "Reculez de trois cases"
+    },
+    {
+        "type": "goto",
+        "text": "Rendez-vous à l'Avenue Henri-Martin. Si vous passez par la case départ, recevez 200 $",
+        "position": 24
+    },
+    {
+        "type": "goto",
+        "text": "Rendez-vous à la Rue de la Paix",
+        "position": 39
+    },
+    {
+        "type": "goto",
+        "text": "Avancez au Boulevard de la Villette. Si vous passez par la case départ, recevez 200 $",
+        "position": 11
+    },
+    {
+        "type": "goto",
+        "text": "Allez à la Gare Montparnasse. Si vous passez par la case départ, recevez 200 $",
+        "position": 5
+    },
+    {
+        "type": "goto_prison",
+        "text": "Allez en prison. Allez tout droit en prison. Ne passez pas par la case départ, ne recevez pas 200 $"
+    },
+    {
+        "type": "next_train_station",
+        "text": "Avancez jusqu'à la gare la plus proche"
+    },
+    {
+        "type": "next_company",
+        "text": "Avancez jusqu'à la companie de service la plus proche"
+    },
+    {
+        "type": "get_out_of_prison",
+        "text": "Vous êtes libérés de prison, cette carte peut être conservée jusqu'à ce qu'elle soit utilisée ou vendue."
+    },
+    {
+        "type": "goto",
+        "text": "Avancez jusqu'à la case depart (Recevez 200 $)",
+        "position": 0
+    },
+    {
+        "type": "pay_everyone",
+        "amount": 50,
+        "text": "Vous avez été élu président du conseil d'administration. Versez 50 $ à chaque joueur."
+    },
+    {
+        "type": "renovations",
+        "text": "Vous faites des réparations sur vos propriétés. Versez 25 $ par maison et 100 $ par hôtel que vous possédez.",
+        "hotel": 100,
+        "house": 25
+    }
+]

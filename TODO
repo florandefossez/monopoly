@@ -1,0 +1,19 @@
+# TODO list
+
+# BUG
+- socketmanager broadcast raw_msg n'a plus de header !
+
+# fonc
+- refaire plateau
+- refaire pions
+- refaire cartes & popups
+- auto scale la font size
+- sidebar
+- indication hypothèque
+- ajouter un bruit sur la position des pions, des maisons et les dés
+- transaction entre joueurs
+- game over
+- mode lan
+- Server.shareplayers to manage more than 2 players
+- get_out_of_prison_card
+- Support for saving and loading game progress.

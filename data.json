@@ -1,0 +1,264 @@
+[
+    {
+        "name": "Départ",
+        "type": "special", 
+        "method": "depart"
+    },
+    {
+        "name": "Boulevard de Belleville",
+        "type": "street",
+        "base_price": 60,
+        "color": 0,
+        "house_price": 50,
+        "rent": [2, 10, 30, 90, 160, 250]
+    },
+    {
+        "name": "Caisse de communauté", 
+        "type": "special", 
+        "method": "caisse"
+    },
+    {
+        "name": "Rue Lecourbe",
+        "type": "street",
+        "base_price": 60,
+        "color": 0,
+        "house_price": 50,
+        "rent": [4, 20, 60, 180, 320, 450]
+    },
+    {
+        "name": "Impôts sur le revenu", 
+        "type": "special", 
+        "method": "impots"
+    },
+    {
+        "name": "Gare Montparnasse", 
+        "type": "gare"
+    },
+    {
+        "name": "Rue de Vaugirard",
+        "type": "street",
+        "base_price": 100,
+        "color": 1,
+        "house_price": 50,
+        "rent": [6, 30, 90, 270, 400, 550]
+    },
+    {
+        "name": "Chance", 
+        "type": "special", 
+        "method": "chance"
+    },
+    {
+        "name": "Rue de Courcelles",
+        "type": "street",
+        "base_price": 100,
+        "color": 1,
+        "house_price": 50,
+        "rent": [6, 30, 90, 270, 400, 550]
+    },
+    {
+        "name": "Rue de la République",
+        "type": "street",
+        "base_price": 120,
+        "color": 1,
+        "house_price": 50,
+        "rent": [8, 40, 100, 300, 450, 600]
+    },
+    {
+        "name": "Prison", 
+        "type": "special", 
+        "method": "prison"
+    },
+    {
+        "name": "Boulevard de la Villette",
+        "type": "street",
+        "base_price": 140,
+        "color": 2,
+        "house_price": 100,
+        "rent": [10, 50, 150, 450, 625, 750]
+    },
+    {
+        "name": "Companie de Distribution d'électricité",
+        "type": "company",
+        "method": "electricity"
+    },
+    {
+        "name": "Avenue de Neuilly",
+        "type": "street",
+        "base_price": 140,
+        "color": 2,
+        "house_price": 100,
+        "rent": [10, 50, 150, 450, 625, 750]
+    },
+    {
+        "name": "Rue de Paradis",
+        "type": "street",
+        "base_price": 160,
+        "color": 2,
+        "house_price": 100,
+        "rent": [12, 60, 180, 500, 700, 900]
+    },
+    {
+        "name": "Gare de Lyon", 
+        "type": "gare"
+    },
+    {
+        "name": "Avenue Mozart",
+        "type": "street",
+        "base_price": 180,
+        "color": 3,
+        "house_price": 100,
+        "rent": [14, 70, 200, 550, 750, 950]
+    },
+    {
+        "name": "Caisse de communauté", 
+        "type": "special", 
+        "method": "caisse"
+    },
+    {
+        "name": "Boulevard Saint-Michel",
+        "type": "street",
+        "base_price": 180,
+        "color": 3,
+        "house_price": 100,
+        "rent": [14, 70, 200, 550, 750, 950]
+    },
+    {
+        "name": "Place Pigalle",
+        "type": "street",
+        "base_price": 200,
+        "color": 3,
+        "house_price": 100,
+        "rent": [16, 80, 220, 600, 800, 1000]
+    },
+    {
+        "name": "Parc Gratuit", 
+        "type": "special", 
+        "method": "parc"
+    },
+    {
+        "name": "Avenue Matignon",
+        "type": "street",
+        "base_price": 220,
+        "color": 4,
+        "house_price": 150,
+        "rent": [18, 90, 250, 700, 875, 1050]
+    },
+    {
+        "name": "Chance",
+        "type": "special", 
+        "method": "chance"
+    },
+    {
+        "name": "Boulevard Malesherbes",
+        "type": "street",
+        "base_price": 220,
+        "color": 4,
+        "house_price": 150,
+        "rent": [18, 90, 250, 700, 875, 1050]
+    },
+    {
+        "name": "Avenue Henri-Martin",
+        "type": "street",
+        "base_price": 240,
+        "color": 4,
+        "house_price": 150,
+        "rent": [20, 100, 300, 750, 925, 1100]
+    },
+    {
+        "name": "Gare du Nord", 
+        "type": "gare"
+    },
+    {
+        "name": "Faubourg Saint-Honoré",
+        "type": "street",
+        "base_price": 260,
+        "color": 5,
+        "house_price": 150,
+        "rent": [22, 110, 330, 800, 975, 1150]
+    },
+    {
+        "name": "Place de la Bourse",
+        "type": "street",
+        "base_price": 260,
+        "color": 5,
+        "house_price": 150,
+        "rent": [22, 110, 330, 800, 975, 1150]
+    },
+    {
+        "name": "Companie de Distribution des eaux", 
+        "type": "company", 
+        "method": "water"
+    },
+    {
+        "name": "Rue La Fayette",
+        "type": "street",
+        "base_price": 280,
+        "color": 5,
+        "house_price": 150,
+        "rent": [24, 120, 360, 850, 1025, 1200]
+    },
+    {
+        "name": "Allez en Prison", 
+        "type": "special", 
+        "method": "go_to_prison"
+    },
+    {
+        "name": "Avenue de Breteuil",
+        "type": "street",
+        "base_price": 300,
+        "color": 6,
+        "house_price": 200,
+        "rent": [26, 130, 390, 900, 1100, 1275]
+    },
+    {
+        "name": "Avenue Foch",
+        "type": "street",
+        "base_price": 300,
+        "color": 6,
+        "house_price": 200,
+        "rent": [26, 130, 390, 900, 1100, 1275]
+    },
+    {
+        "name": "Caisse de communauté", 
+        "type": "special", 
+        "method": "caisse"
+    },
+    {
+        "name": "Boulevard des Capucines",
+        "type": "street",
+        "base_price": 320,
+        "color": 6,
+        "house_price": 200,
+        "rent": [28, 150, 450, 1000, 1200, 1400]
+    },
+    {
+        "name": "Gare Saint-Lazare", 
+        "type": "gare"
+    },
+    {
+        "name": "Chance", 
+        "type": "special", 
+        "method": "chance"
+    },
+    {
+        "name": "Avenue des Champs-Elysées",
+        "type": "street",
+        "base_price": 350,
+        "color": 7,
+        "house_price": 200,
+        "rent": [35, 175, 500, 1100, 1300, 1500]
+    },
+    {
+        "name": "Taxe de Luxe", 
+        "type": "special", 
+        "method": "taxe"
+    },
+    {
+        "name": "Rue de la Paix",
+        "type": "street",
+        "base_price": 400,
+        "color": 7,
+        "house_price": 200,
+        "rent": [50, 200, 600, 1400, 1700, 2000]
+    }
+]
