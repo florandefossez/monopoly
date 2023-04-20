@@ -17,7 +17,7 @@ class Box:
         l = game.height / (9 + 2 * game.r)
         L = l * game.r
         for box in Box.boxes:
-            box.rect.update((game.width - game.height) / 2, 0, 0, 0)
+            box.rect.update(game.width - game.height, 0, 0, 0)
             if box.n in range(1, 10):
                 box.rect.move_ip(L + l * (9 - box.n), game.height - L)
                 box.rect.size = l, L

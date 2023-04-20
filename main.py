@@ -61,7 +61,7 @@ class Game:
             )
         self.rect_dice1 = pygame.Rect(
             (
-                (self.width - self.height) / 2 + dice_size * (2 + 15 / self.r),
+                (self.width - self.height) + dice_size * (2 + 15 / self.r),
                 dice_size * (2 + 20 / self.r),
                 0,
                 0,
@@ -146,11 +146,11 @@ class Game:
                 for popup in self.popups:
                     popup.update()
 
-            # set background
-            self.screen.blit(self.background, ((self.width - self.height) / 2, 0))
-
             # set sidebar
             self.sidebar.draw()
+
+            # set plateau
+            self.screen.blit(self.background, (self.width - self.height, 0))
 
             # set players
             self.myself.draw()

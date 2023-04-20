@@ -26,7 +26,7 @@ class Card:
             self.image , (self.game.height / 3, 4 * self.game.height / 9)
         )
         self.closeRect = pygame.Rect(
-            self.game.width / 2 - self.card.get_width() / 2,
+            self.game.width - self.game.height / 2 - self.card.get_width() / 2,
             self.game.height / 2 - self.card.get_height() / 2,
             0.15 * self.game.height / 3,
             0.15 * self.game.height / 3,
@@ -58,7 +58,7 @@ class Card:
         self.game.screen.blit(
             self.card,
             (
-                self.game.width / 2 - self.card.get_width() / 2,
+                self.game.width - self.game.height / 2 - self.card.get_width() / 2,
                 self.game.height / 2 - self.card.get_height() / 2,
             ),
         )
