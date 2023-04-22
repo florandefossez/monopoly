@@ -103,14 +103,6 @@ class StreetCard(Card):
             )
             i += 1
 
-        # display owner
-        if self.box.player:
-            image = pygame.transform.scale(
-                self.box.player.image,
-                (0.15 * self.game.height / 3, 0.15 * self.game.height / 3),
-            )
-            self.card.blit(image, (width - 0.15 * self.game.height / 3, 0))
-
         # manage bottom buttons
         a = 0.15 * width
         space = (width - 4 * a) / 5
@@ -147,13 +139,6 @@ class GareCard(Card):
         super().update()
         width, height = self.image.get_size()
         # font = pygame.font.Font(None, 32)
-        # display owner
-        if self.box.player:
-            image = pygame.transform.scale(
-                self.box.player.image,
-                (0.15 * self.game.height / 3, 0.15 * self.game.height / 3),
-            )
-            self.image.blit(image, (width - 0.15 * self.game.height / 3, 0))
 
         # manage bottom buttons
         a = 0.15 * width
@@ -183,13 +168,6 @@ class CompanyCard(Card):
         super().update()
         width, height = self.image.get_size()
         # font = pygame.font.Font(None, 32)
-        # display owner
-        if self.box.player:
-            image = pygame.transform.scale(
-                self.box.player.image,
-                (0.15 * self.game.height / 3, 0.15 * self.game.height / 3),
-            )
-            self.image.blit(image, (width - 0.15 * self.game.height / 3, 0))
 
         # manage bottom buttons
         a = 0.15 * width
