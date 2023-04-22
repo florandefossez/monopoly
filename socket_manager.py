@@ -4,6 +4,7 @@ import threading
 from player import Player
 from box import Box, Street, Gare, Company, Special
 from popup import OkPopup
+import pygame
 
 HEADER = 4
 
@@ -58,10 +59,10 @@ class Server(SocketManager):
         self.socket.listen(5)
         while connected_player < self.game.settings["n_client"]:
             (clientsocket, address) = self.socket.accept()
-            remote_player_image = clientsocket.recv(2048).decode()
-            clientsocket.send(bytes(self.game.settings["image"], "utf-8"))
-            self.game.add_player(remote_player_image)
-            self.clients.append(clientsocket)
+            # remote_player_image = clientsocket.recv(2048).decode()
+            # clientsocket.send(bytes(self.game.settings["image"], "utf-8"))
+            # self.game.add_player(remote_player_image, 'remote')
+            self.clients.append([clientsocket, None])
             threading.Thread(target=self.socket_thread, args=(clientsocket,)).start()
             connected_player += 1
         self.socket.close()
@@ -69,7 +70,23 @@ class Server(SocketManager):
         self.game.our_turn = True
 
     def share_players(self):
-        pass
+        msg = {
+            "type": "presentation",
+            "address": self.game.settings["image"],
+            "name": self.game.settings["name"]
+        }
+        self.broadcast(json.dumps(msg).encode("utf-8"), None)
+        timeout = 0
+        for client in self.clients:
+            while client[1] is None:
+                pygame.time.wait(100)
+                timeout += 1
+                if timeout >= 100:
+                    raise TimeoutError("failed to retrive client information")
+            msg["address"] = client[1].address
+            msg["name"] = client[1].name
+            self.broadcast(json.dumps(msg).encode("utf-8"), client[0])
+            
 
     def socket_thread(self, client):
         while self.game.running:
@@ -84,7 +101,13 @@ class Server(SocketManager):
                 print(f"Failed to parse header {header}, {client.recv(4096).decode()}, {e}")
                 continue
 
-            if msg["type"] == "end_turn":  # the client ends his turn
+            if msg["type"] == "presentation": # first message from client
+                p = self.game.add_player(msg["address"], msg["name"])
+                for c in self.clients:
+                    if c[0] == client:
+                        c[1] = p
+
+            elif msg["type"] == "end_turn":  # the client ends his turn
                 self.next_turn()
 
             elif msg["type"] == "player":  # the client gives updates of a player
@@ -113,44 +136,44 @@ class Server(SocketManager):
         else:
             self.turn += 1
             msg = self.prepare_message({"type": "your_turn"})
-            self.clients[self.turn].send(msg)
+            self.clients[self.turn][0].send(msg)
 
     def broadcast(self, raw_msg, source):
         header = str(len(raw_msg)).encode("utf-8").rjust(HEADER, b"0")
         msg = header + raw_msg
         for client in self.clients:
-            if client != source:
-                client.send(msg)
+            if client[0] != source:
+                client[0].send(msg)
 
     def send_player(self, player):
         msg = player.to_dict()
         msg["type"] = "player"
         msg = self.prepare_message(msg)
         for client in self.clients:
-            client.send(msg)
+            client[0].send(msg)
 
     def send_box(self, box):
         msg = box.to_dict()
         msg["type"] = "box"
         msg = self.prepare_message(msg)
         for client in self.clients:
-            client.send(msg)
+            client[0].send(msg)
 
     def send_dice(self):
         msg = {"type": "dice", "dice1": self.game.dice1, "dice2": self.game.dice2}
         msg = self.prepare_message(msg)
         for client in self.clients:
-            client.send(msg)
+            client[0].send(msg)
     
     def send_info(self, text):
         msg = {"type": "info", "text": text}
         msg = self.prepare_message(msg)
         for client in self.clients:
-            client.send(msg)
+            client[0].send(msg)
 
     def close(self):
         for client in self.clients:
-            client.close()
+            client[0].close()
 
 
 class Client(SocketManager):
@@ -160,9 +183,15 @@ class Client(SocketManager):
         self.socket.connect(
             (self.game.settings["remote_ip"], self.game.settings["remote_port"])
         )
-        self.socket.send(bytes(self.game.settings["image"], "utf-8"))
-        remote_player_image = self.socket.recv(2048).decode()
-        self.game.add_player(remote_player_image)
+        msg = {
+            "type": "presentation",
+            "address": self.game.settings["image"],
+            "name": self.game.settings["name"]
+        }
+        self.socket.send(self.prepare_message(msg))
+        # self.socket.send(bytes(self.game.settings["image"], "utf-8"))
+        # remote_player_image = self.socket.recv(2048).decode()
+        # self.game.add_player(remote_player_image, 'remote')
         self.game.our_turn = False
         threading.Thread(target=self.socket_thread, args=(self.socket,)).start()
 
@@ -179,7 +208,10 @@ class Client(SocketManager):
                 print(f"Failed to parse header {header}, {server.recv(4096).decode()}, {e}")
                 continue
 
-            if msg["type"] == "your_turn":  # it's my turn
+            if msg["type"] == "presentation": # server send new player
+                self.game.add_player(msg["address"], msg["name"])
+
+            elif msg["type"] == "your_turn":  # it's my turn
                 self.game.our_turn = True
 
             elif msg["type"] == "player":  # the server gives updates on a player

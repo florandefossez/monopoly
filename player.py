@@ -3,8 +3,9 @@ from box import Box
 
 
 class Player:
-    def __init__(self, game, address):
+    def __init__(self, game, address, name):
         self.address = address
+        self.name = name
         Player.game = game
         self.position = 0
         self.box = Box.boxes[0]
@@ -20,10 +21,10 @@ class Player:
         )  # 0.4*L
         small_image_size = 0.3*self.game.height / (9 + 2 * self.game.r) # 0.3*l
         self.image = pygame.transform.smoothscale(
-            pygame.image.load(self.address), (image_size, image_size)
+            pygame.image.load(f"assets/{self.address}.png"), (image_size, image_size)
         )
         self.small_image = pygame.transform.smoothscale(
-            pygame.image.load(self.address), (small_image_size, small_image_size)
+            pygame.image.load(f"assets/{self.address}.png"), (small_image_size, small_image_size)
         )
         self.rect = self.image.get_rect()
         offset = (
@@ -68,23 +69,26 @@ class Player:
             self.game.screen.blit(self.image, self.rect)
 
     def to_dict(self):
-        return {"pos": self.position, "money": self.money, "name": self.address}
+        return {"pos": self.position, "money": self.money, "name": self.name, "address":self.address}
 
     def _update_from_dict(self, data):
-        if data.get("name") != self.address:
+        if data.get("name") != self.name:
             return
         if "money" in data:
             self.money = data["money"]
         if "pos" in data:
             self.position = data["pos"]
             self.update_position()
+        if "address" in data and self.address != data['address']:
+            self.address = data['address']
+            self.update_image()
 
     @staticmethod
     def update_from_dict(data):
         if "name" not in data:
             raise (Exception(f"Error in player update {data}"))
-        if data["name"] == Player.game.myself.address:
+        if data["name"] == Player.game.myself.name:
             player = Player.game.myself
         else:
-            player = [p for p in Player.game.players if p.address == data["name"]][0]
+            player = [p for p in Player.game.players if p.name == data["name"]][0]
         player._update_from_dict(data)

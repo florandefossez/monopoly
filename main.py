@@ -21,18 +21,18 @@ class Game:
         with open(args.path, "r") as f:
             self.settings = json.load(f)
 
-        self.width = 1000
-        self.height = 700
+        self.width = 1080
+        self.height = 720
         Box.load(self)
         self.parc = 0
-        self.myself = Player(self, f"assets/{self.settings['image']}.png")
+        self.myself = Player(self, self.settings['image'], self.settings["name"])
         self.players = []
         self.popups = []
         self.dice1 = 1
         self.dice2 = 1
         self.double_in_row = 0
         self.our_turn = False
-        self.end_turn = True
+        self.send_end_turn = False
 
         if self.settings["server"]:
             self.socket_manager = Server(self)
@@ -47,8 +47,10 @@ class Game:
         self.dice_image = {}
         self.load_assets()
 
-    def add_player(self, address):
-        self.players.append(Player(self, f"assets/{address}.png"))
+    def add_player(self, address, name):
+        Newplayer = Player(self, address, name)
+        self.players.append(Newplayer)
+        return Newplayer
 
     def load_assets(self):
         self.background = pygame.transform.smoothscale(
@@ -70,7 +72,7 @@ class Game:
         self.rect_dice2 = self.rect_dice1.move(5 * dice_size / self.r, 0)
 
     def new_turn(self):
-        self.end_turn = False
+        self.send_end_turn = True
 
         # throw dice
         self.dice1 = randint(1, 6)
@@ -130,9 +132,9 @@ class Game:
     def run(self):
         while self.running:
             # end the turn ?
-            if not self.end_turn and self.popups == [] and self.myself.money >= 0:
+            if not self.our_turn and self.send_end_turn and self.popups == [] and self.myself.money >= 0:
                 self.socket_manager.next_turn()
-                self.end_turn = True
+                self.send_end_turn = False
 
             # rescale objects if needed
             if (self.width, self.height) != self.screen.get_size():
@@ -168,6 +170,11 @@ class Game:
             
             # set boxes owners
             Box.draw()
+
+            # turn indicator icon
+            s = pygame.Surface((20,20))
+            s.fill(pygame.Color(0,0,255*self.our_turn))
+            self.screen.blit(s, (0,self.height-20))
 
             # set popups
             if self.popups:

@@ -106,7 +106,7 @@ class StreetCard(Card):
         # display owner
         if self.box.player:
             image = pygame.transform.scale(
-                pygame.image.load(self.box.player.address),
+                self.box.player.image,
                 (0.15 * self.game.height / 3, 0.15 * self.game.height / 3),
             )
             self.card.blit(image, (width - 0.15 * self.game.height / 3, 0))
@@ -150,7 +150,7 @@ class GareCard(Card):
         # display owner
         if self.box.player:
             image = pygame.transform.scale(
-                pygame.image.load(self.box.player.address),
+                self.box.player.image,
                 (0.15 * self.game.height / 3, 0.15 * self.game.height / 3),
             )
             self.image.blit(image, (width - 0.15 * self.game.height / 3, 0))
@@ -186,7 +186,7 @@ class CompanyCard(Card):
         # display owner
         if self.box.player:
             image = pygame.transform.scale(
-                pygame.image.load(self.box.player.address),
+                self.box.player.image,
                 (0.15 * self.game.height / 3, 0.15 * self.game.height / 3),
             )
             self.image.blit(image, (width - 0.15 * self.game.height / 3, 0))

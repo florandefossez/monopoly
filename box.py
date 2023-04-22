@@ -128,7 +128,7 @@ class Street(Box):
             game.popups.append(
                 OkPopup(
                     game,
-                    f"Vous payer {self.rent[self.houses]} $ au joueur {game.players.index(self.player)}",
+                    f"Vous payer {self.rent[self.houses]} $ au joueur {self.player.name}",
                 )
             )
         elif self.player != player and self.in_mortgage:
@@ -368,7 +368,7 @@ class Street(Box):
         return {
             "n": self.n,
             "houses": self.houses,
-            "player": self.player.address if self.player is not None else "No_one",
+            "player": self.player.name if self.player is not None else "No_one",
             "in_mortgage": self.in_mortgage,
         }
 
@@ -380,13 +380,13 @@ class Street(Box):
         if "player" in data:
             if data["player"] == "No_one":
                 self.player = None
-            elif data["player"] == self.game.myself.address:
+            elif data["player"] == self.game.myself.name:
                 self.player = self.game.myself
             else:
                 player = [
                     player
                     for player in self.game.players
-                    if player.address == data["player"]
+                    if player.name == data["player"]
                 ][0]
                 self.player = player
         if "in_mortgage" in data:
@@ -418,7 +418,7 @@ class Gare(Box):
             self.player.money += price
             player.money -= price
             game.popups.append(
-                OkPopup(game, f"Vous payer {price} $ au joueur {self.player.address}")
+                OkPopup(game, f"Vous payer {price} $ au joueur {self.player.name}")
             )
         elif self.player != player and self.in_mortgage:
             game.popups.append(
@@ -505,7 +505,7 @@ class Gare(Box):
     def to_dict(self):
         return {
             "n": self.n,
-            "player": self.player.address if self.player is not None else "No_one",
+            "player": self.player.name if self.player is not None else "No_one",
             "in_mortgage": self.in_mortgage,
         }
 
@@ -515,13 +515,13 @@ class Gare(Box):
         if "player" in data:
             if data["player"] == "No_one":
                 self.player = None
-            elif data["player"] == self.game.myself.address:
+            elif data["player"] == self.game.myself.name:
                 self.player = self.game.myself
             else:
                 player = [
                     player
                     for player in self.game.players
-                    if player.address == data["player"]
+                    if player.name == data["player"]
                 ][0]
                 self.player = player
         if "in_mortgage" in data:
@@ -557,7 +557,7 @@ class Company(Box):
             self.player.money += price
             player.money -= price
             game.popups.append(
-                OkPopup(game, f"Vous payer {price} $ au joueur {self.player.address}")
+                OkPopup(game, f"Vous payer {price} $ au joueur {self.player.name}")
             )
         elif self.player != player and self.in_mortgage:
             game.popups.append(
@@ -644,7 +644,7 @@ class Company(Box):
     def to_dict(self):
         return {
             "n": self.n,
-            "player": self.player.address if self.player is not None else "No_one",
+            "player": self.player.name if self.player is not None else "No_one",
             "in_mortgage": self.in_mortgage,
         }
 
@@ -654,13 +654,13 @@ class Company(Box):
         if "player" in data:
             if data["player"] == "No_one":
                 self.player = None
-            elif data["player"] == self.game.myself.address:
+            elif data["player"] == self.game.myself.name:
                 self.player = self.game.myself
             else:
                 player = [
                     player
                     for player in self.game.players
-                    if player.address == data["player"]
+                    if player.name == data["player"]
                 ][0]
                 self.player = player
         if "in_mortgage" in data:
@@ -739,7 +739,7 @@ class Special(Box):
     
     def playcard(self, player, game, isChance):
         if isChance: 
-            card = Special.chance[random.randint(0,15)]
+            card = Special.chance[random.randint(0,14)]
         else:
             card = Special.community_chest[random.randint(0,15)]
         match card["type"]:
@@ -828,7 +828,7 @@ class Special(Box):
                 game.popups.append(OkPopup(game, card["text"]))
             case "pay_everyone":
                 game.popups.append(OkPopup(game, card["text"]))
-                game.socket_manager.send_info(f"Vous recevez {card['amount']} $ de {player.address}.")
+                game.socket_manager.send_info(f"Vous recevez {card['amount']} $ de {player.name}.")
                 price = 0
                 for p in game.players:
                     p.earn(card["amount"])
@@ -837,7 +837,7 @@ class Special(Box):
                 player.pay(price)
             case "earn_from_everyone":
                 game.popups.append(OkPopup(game, card["text"]))
-                game.socket_manager.send_info(f"Vous versez {card['amount']} $ à {player.address}.")
+                game.socket_manager.send_info(f"Vous versez {card['amount']} $ à {player.name}.")
                 price = 0
                 for p in game.players:
                     p.pay(card["amount"])
@@ -866,26 +866,26 @@ def may_sell(box):
 
 def sell_to_bank(box):
     if box.in_mortgage:
-            box.game.myself.money += 75
+            box.game.myself.money += box.base_price/2
             box.player = None
             box.game.popups.insert(
                 0,
                 OkPopup(
-                    box.game, f"Vous avez vendu {box.name} à la banque pour 75 $"
+                    box.game, f"Vous avez vendu {box.name} à la banque pour {box.base_price/2} $"
                 ),
             )
     else:
-        box.game.myself.money += 150
+        box.game.myself.money += box.base_price
         box.player = None
         box.game.popups.insert(
             0,
             OkPopup(
-                box.game, f"Vous avez vendu {box.name} à la banque pour 150 $"
+                box.game, f"Vous avez vendu {box.name} à la banque pour {box.base_price} $"
             ),
         )
     box.game.socket_manager.send_box(box)
     box.game.socket_manager.send_player(box.game.myself)
-    box.game.socket_manager.send_info(f"{box.game.myself.address} à vendu {box.name} à la banque")
+    box.game.socket_manager.send_info(f"{box.game.myself.name} à vendu {box.name} à la banque")
 
 def may_sell_to_player(box):
     box.game.popups.insert(
@@ -905,12 +905,12 @@ def sell_to_player(box):
         box.game.popups.insert(
             0,
             OkPopup(
-                box.game, f"Vous avez vendu {box.name} à {player.address} $"
+                box.game, f"Vous avez vendu {box.name} à {player.name} $"
             ),
         )
         box.game.socket_manager.send_box(box)
         box.game.socket_manager.send_player(player)
-        box.game.socket_manager.send_info(f"{box.game.myself.address} à vendu {box.name} à {player.address}")
+        box.game.socket_manager.send_info(f"{box.game.myself.name} à vendu {box.name} à {player.name}")
 
     box.game.popups.insert(
         0,
