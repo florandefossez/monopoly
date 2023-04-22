@@ -16,8 +16,12 @@ class Sidebar():
         )
         self.sidebar.fill(pygame.Color(218, 233, 212))
 
-        word_surface = self.font.render(f"{self.game.myself.money} $", True, pygame.Color(0,0,0))
-        self.sidebar.blit(word_surface, (10, 10))
+        rect = pygame.Rect(10,10,0,0)
+        for player in [self.game.myself, *self.game.players]:
+            self.sidebar.blit(player.image, rect)
+            money = self.font.render(f"{player.money} $", True, pygame.Color(0,0,0))
+            self.sidebar.blit(money, rect.move(player.image.get_height(), 0))
+            rect.move_ip(0,player.image.get_height())
         self.game.screen.blit(
             self.sidebar, (0, 0)
         )
