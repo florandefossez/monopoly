@@ -43,6 +43,7 @@ class Game:
         self.screen = pygame.display.set_mode(
             (self.width, self.height), pygame.RESIZABLE
         )
+        self.clock = pygame.time.Clock()
         self.sidebar = Sidebar(self)
         self.dice_image = {}
         self.load_assets()
@@ -131,6 +132,7 @@ class Game:
 
     def run(self):
         while self.running:
+            self.clock.tick(60)
             # end the turn ?
             if not self.our_turn and self.send_end_turn and self.popups == [] and self.myself.money >= 0:
                 self.socket_manager.next_turn()
