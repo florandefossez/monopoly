@@ -242,7 +242,7 @@ class Street(Box):
                 0, OkPopup(self.game, "Cette propriété ne vous appartient pas")
             )
             return
-        elif self.in_mortgage and self.game.myself.money < self.base_price // 2:
+        elif self.in_mortgage and self.game.myself.money < self.base_price * 6 // 10:
             self.game.popups.insert(
                 0,
                 OkPopup(
@@ -251,11 +251,11 @@ class Street(Box):
                 ),
             )
             return
-        elif self.in_mortgage and self.game.myself.money >= self.base_price // 2:
-            self.game.myself.money -= self.base_price // 2
+        elif self.in_mortgage and self.game.myself.money >= self.base_price * 6 // 10:
+            self.game.myself.pay(self.base_price * 6 // 10)
             self.in_mortgage = False
             self.game.popups.insert(
-                0, OkPopup(self.game, f"L'hypothèque sur {self.name} a été levé")
+                0, OkPopup(self.game, f"L'hypothèque sur {self.name} a été levé pour {self.base_price * 6 // 10} $")
             )
         elif self.houses != 0:
             self.game.popups.insert(
@@ -267,13 +267,13 @@ class Street(Box):
             )
             return
         else:
-            self.game.myself.money += self.base_price // 2
+            self.game.myself.earn(self.base_price // 2)
             self.in_mortgage = True
             self.game.popups.insert(
                 0,
                 OkPopup(
                     self.game,
-                    f"Vous avez hypothéqué {self.name} pour {self.base_price//2}",
+                    f"Vous avez hypothéqué {self.name}, vous recevez {self.base_price//2}",
                 ),
             )
         self.game.socket_manager.send_player(self.player)
@@ -452,7 +452,7 @@ class Gare(Box):
 
 
         elif self.in_mortgage:
-            self.game.myself.money += 100
+            self.game.myself.earn(100)
             self.player = None
             self.game.popups.insert(
                 0,
@@ -461,7 +461,7 @@ class Gare(Box):
                 ),
             )
         else:
-            self.game.myself.money += 200
+            self.game.myself.earn(200)
             self.player = None
             self.game.popups.insert(
                 0,
@@ -478,7 +478,7 @@ class Gare(Box):
                 0, OkPopup(self.game, "Cette propriété ne vous appartient pas")
             )
             return
-        elif self.in_mortgage and self.game.myself.money < 100:
+        elif self.in_mortgage and self.game.myself.money < 120:
             self.game.popups.insert(
                 0,
                 OkPopup(
@@ -487,17 +487,17 @@ class Gare(Box):
                 ),
             )
             return
-        elif self.in_mortgage and self.game.myself.money >= 100:
-            self.game.myself.money -= 100
+        elif self.in_mortgage and self.game.myself.money >= 120:
+            self.game.myself.pay(120)
             self.in_mortgage = False
             self.game.popups.insert(
-                0, OkPopup(self.game, f"L'hypothèque sur {self.name} a été levé")
+                0, OkPopup(self.game, f"L'hypothèque sur {self.name} a été levé pour 120 $")
             )
         else:
-            self.game.myself.money += 100
+            self.game.myself.earn(100)
             self.in_mortgage = True
             self.game.popups.insert(
-                0, OkPopup(self.game, f"Vous avez hypothéqué {self.name} pour {100}")
+                0, OkPopup(self.game, f"Vous avez hypothéqué {self.name} vous recevez 100 $")
             )
         self.game.socket_manager.send_box(self)
         self.game.socket_manager.send_player(self.game.myself)
@@ -588,7 +588,7 @@ class Company(Box):
                 0, OkPopup(self.game, "Cette propriété ne vous appartient pas")
             )
             return
-        elif self.in_mortgage and self.game.myself.money < 75:
+        elif self.in_mortgage and self.game.myself.money < 90:
             self.game.popups.insert(
                 0,
                 OkPopup(
@@ -597,17 +597,17 @@ class Company(Box):
                 ),
             )
             return
-        elif self.in_mortgage and self.game.myself.money >= 75:
-            self.game.myself.money -= 75
+        elif self.in_mortgage and self.game.myself.money >= 90:
+            self.game.myself.pay(90)
             self.in_mortgage = False
             self.game.popups.insert(
-                0, OkPopup(self.game, f"L'hypothèque sur {self.name} a été levé")
+                0, OkPopup(self.game, f"L'hypothèque sur {self.name} a été levé pour 90 $")
             )
         else:
-            self.game.myself.money += 75
+            self.game.myself.earn(75)
             self.in_mortgage = True
             self.game.popups.insert(
-                0, OkPopup(self.game, f"Vous avez hypothéqué {self.name} pour 75 $")
+                0, OkPopup(self.game, f"Vous avez hypothéqué {self.name} vous recevez 75 $")
             )
         self.game.socket_manager.send_box(self)
         self.game.socket_manager.send_player(self.game.myself)
@@ -869,10 +869,10 @@ def may_sell(box):
     box.game.popups.insert(
         0,
         YesNoPopup(
-        box.game,
-        f"Voulez vous vendre {box.name} à la banque ?",
-        resolve_no=lambda : may_sell_to_player(box),
-        resolve_yes=lambda : sell_to_bank(box)
+            box.game,
+            f"Voulez vous vendre {box.name} à la banque ?",
+            resolve_no=lambda : None,
+            resolve_yes=lambda : sell_to_bank(box)
         ))
 
 def sell_to_bank(box):
@@ -897,41 +897,4 @@ def sell_to_bank(box):
     box.game.socket_manager.send_box(box)
     box.game.socket_manager.send_player(box.game.myself)
     box.game.socket_manager.send_info(f"{box.game.myself.name} à vendu {box.name} à la banque")
-
-def may_sell_to_player(box):
-    box.game.popups.insert(
-        0,
-        YesNoPopup(
-            box.game,
-            f"Voulez vous vendre {box.name} à un joueur ?",
-            resolve_no=lambda : None,
-            resolve_yes=lambda : sell_to_player(box)
-    ))
-
-def sell_to_player(box):
-    def sell_to(player):
-        box.game.myself.money += box.base_price
-        player.money -= box.base_price
-        box.player = player
-        box.game.popups.insert(
-            0,
-            OkPopup(
-                box.game, f"Vous avez vendu {box.name} à {player.name} $"
-            ),
-        )
-        box.game.socket_manager.send_box(box)
-        box.game.socket_manager.send_player(player)
-        box.game.socket_manager.send_info(f"{box.game.myself.name} à vendu {box.name} à {player.name}")
-
-    box.game.popups.insert(
-        0,
-        SelectPlayer(
-            box.game,
-            f"Choisissez un joueur",
-            resolve=sell_to
-        )
-    )
-    
-   
-    
     
