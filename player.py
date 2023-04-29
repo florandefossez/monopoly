@@ -33,7 +33,7 @@ class Player:
         self.offset = pygame.Rect(offset, offset, 0, 0)
         self.update_position(1)
 
-    def update_position(self, n_frame=100):
+    def update_position(self, n_frame=50):
         self.box = Box.boxes[self.position]
         destination = self.box.rect.move(self.offset.topleft)
         if self.position in range(11):

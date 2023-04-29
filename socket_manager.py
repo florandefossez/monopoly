@@ -4,6 +4,7 @@ import threading
 from player import Player
 from box import Box, Street, Gare, Company, Special
 from popup import OkPopup
+from receiveDeal import ReceiveDeal
 import pygame
 
 HEADER = 4
@@ -26,6 +27,9 @@ class SocketManager:
     def update_dice(self, data):
         self.game.dice1 = data["dice1"]
         self.game.dice2 = data["dice2"]
+    
+    def deal(self, data):
+        self.game.popups.append(ReceiveDeal(self.game, data))
 
     def send_player(self, player):
         raise (Exception("should be handled by Client or Server subclass"))
@@ -123,11 +127,14 @@ class Server(SocketManager):
                 self.broadcast(raw_msg, client)
 
             elif msg["type"] == "msg":  # the client send a message to someone
-                pass
+                self.private_msg(msg)
 
             elif msg["type"] == "dice":  # the client tossed the dices
                 self.update_dice(msg)
                 self.broadcast(raw_msg, client)
+            
+            elif msg["type"] == "deal": # someone send me a deal
+                self.deal(msg)
 
     def next_turn(self):
         if self.turn == self.game.settings["n_client"] - 1:
@@ -170,6 +177,35 @@ class Server(SocketManager):
         msg = self.prepare_message(msg)
         for client in self.clients:
             client[0].send(msg)
+    
+    def send_deal(self, deal):
+        msg = self.prepare_message(deal)
+        for client in self.clients:
+            if client[1].name == deal["recipient"]:
+                client[0].send(msg)
+
+    def send_private_msg(self, text, recipient_name):
+        msg = {
+            "text": text,
+            "type": "msg",
+            "recipient": recipient_name
+        }
+        msg = self.prepare_message(msg)
+        for client in self.clients:
+            if client[1].name == recipient_name:
+                client[0].send(msg)
+    
+    def deal(self, data):
+        if data["recipient"] == self.game.myself.name:
+            super().deal(data)
+        else:
+            self.send_deal(data)
+    
+    def private_msg(self, msg):
+        if msg["recipient"] == self.game.myself.name:
+            self.info(msg)
+        else:
+            self.send_private_msg(msg["text"], msg["recipient"])
 
     def close(self):
         for client in self.clients:
@@ -189,9 +225,6 @@ class Client(SocketManager):
             "name": self.game.settings["name"]
         }
         self.socket.send(self.prepare_message(msg))
-        # self.socket.send(bytes(self.game.settings["image"], "utf-8"))
-        # remote_player_image = self.socket.recv(2048).decode()
-        # self.game.add_player(remote_player_image, 'remote')
         self.game.our_turn = False
         threading.Thread(target=self.socket_thread, args=(self.socket,)).start()
 
@@ -228,6 +261,9 @@ class Client(SocketManager):
 
             elif msg["type"] == "dice":  # someone tossed the dices
                 self.update_dice(msg)
+            
+            elif msg["type"] == "deal": # someone send me a deal
+                self.deal(msg)
 
     def next_turn(self):
         msg = self.prepare_message({"type": "end_turn"})
@@ -252,6 +288,19 @@ class Client(SocketManager):
     
     def send_info(self, text):
         msg = {"type": "info", "text": text}
+        msg = self.prepare_message(msg)
+        self.socket.send(msg)
+    
+    def send_deal(self, deal):
+        msg = self.prepare_message(deal)
+        self.socket.send(msg)
+    
+    def send_private_msg(self, text, recipient_name):
+        msg = {
+            "text": text,
+            "type": "msg",
+            "recipient": recipient_name
+        }
         msg = self.prepare_message(msg)
         self.socket.send(msg)
 

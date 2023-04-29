@@ -11,6 +11,7 @@ from card import Card
 from popup import OkPopup, YesNoPopup
 from socket_manager import SocketManager, Server, Client
 from sidebar import Sidebar
+from deal import Deal
 
 
 class Game:
@@ -118,7 +119,7 @@ class Game:
             self.double_in_row = 0
             self.our_turn = False
 
-        # send_updates
+        # send_updates for position
         self.socket_manager.send_player(self.myself)
 
         # game over ?
@@ -200,6 +201,8 @@ class Game:
                         if box.rect.collidepoint(event.pos):
                             self.popups.append(Card(self, box))
                             break
+                    if self.sidebar.deal_rect.collidepoint(event.pos):
+                        self.popups.append(Deal(self))
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and self.our_turn:
