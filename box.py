@@ -717,20 +717,31 @@ class Special(Box):
         if player.prison_time == 0:
             return
         player.prison_time -= 1
-        if player.money < 50:
-            return
-        game.popups.append(
-            YesNoPopup(
-                game,
-                "Voulez-vous sortir de prison pour 50 $ ?",
-                resolve_yes=lambda: self.leave_prison(player, game),
-                resolve_no=lambda: None,
+        if player.get_out_of_prison_card:
+            game.popups.append(
+                YesNoPopup(
+                    game,
+                    "Voulez-vous sortir de prison avec votre carte ?",
+                    resolve_yes=lambda: self.leave_prison(player, game, False),
+                    resolve_no=lambda: None,
+                )
             )
-        )
+        else:
+            game.popups.append(
+                YesNoPopup(
+                    game,
+                    "Voulez-vous sortir de prison pour 50 $ ?",
+                    resolve_yes=lambda: self.leave_prison(player, game, True),
+                    resolve_no=lambda: None,
+                )
+            )
 
-    def leave_prison(self, player, game):
-        player.money -= 50
-        game.parc += 50
+    def leave_prison(self, player, game, pay):
+        if pay:
+            player.pay(50)
+            game.parc += 50
+        else:
+            player.get_out_of_prison_card -= 1
         player.prison_time = 0
         player.position += game.dice1 + game.dice2
         game.socket_manager.send_player(player)
