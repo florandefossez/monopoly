@@ -91,13 +91,13 @@ class Box:
         l = Box.game.height / (9 + 2 * Box.game.r)
         for i in range(40):
             if i in range(1,10) and getattr(Box.boxes[i], "player", None) is not None:
-                Box.game.screen.blit(Box.boxes[i].player.small_image, Box.boxes[i].rect.move(l*0.35,-0.3*l))
+                Box.game.screen.blit(Box.boxes[i].player.small_red_image if Box.boxes[i].in_mortgage else Box.boxes[i].player.small_image, Box.boxes[i].rect.move(l*0.35,-0.3*l))
             if i in range(11,20) and getattr(Box.boxes[i], "player", None) is not None:
-                Box.game.screen.blit(pygame.transform.rotate(Box.boxes[i].player.small_image,270), Box.boxes[i].rect.move(Box.game.r*l,0.35*l))
+                Box.game.screen.blit(pygame.transform.rotate(Box.boxes[i].player.small_red_image if Box.boxes[i].in_mortgage else Box.boxes[i].player.small_image ,270), Box.boxes[i].rect.move(Box.game.r*l,0.35*l))
             if i in range(21,30) and getattr(Box.boxes[i], "player", None) is not None:
-                Box.game.screen.blit(Box.boxes[i].player.small_image, Box.boxes[i].rect.move(l*0.35,Box.game.r*l))
+                Box.game.screen.blit(Box.boxes[i].player.small_red_image if Box.boxes[i].in_mortgage else Box.boxes[i].player.small_image , Box.boxes[i].rect.move(l*0.35,Box.game.r*l))
             if i in range(31,40) and getattr(Box.boxes[i], "player", None) is not None:
-                Box.game.screen.blit(pygame.transform.rotate(Box.boxes[i].player.small_image,90), Box.boxes[i].rect.move(-l*0.3,0.35*l))
+                Box.game.screen.blit(pygame.transform.rotate(Box.boxes[i].player.small_red_image if Box.boxes[i].in_mortgage else Box.boxes[i].player.small_image ,90), Box.boxes[i].rect.move(-l*0.3,0.35*l))
 
 
 class Street(Box):

@@ -26,6 +26,8 @@ class Player:
         self.small_image = pygame.transform.smoothscale(
             pygame.image.load(f"assets/{self.address}.png"), (small_image_size, small_image_size)
         )
+        self.small_red_image = self.small_image.copy()
+        self.small_red_image.fill((150, 0, 0, 200), None, pygame.BLEND_RGBA_MULT)
         self.rect = self.image.get_rect()
         offset = (
             self.game.height * (1 - 0.4 * self.game.r) / (18 + 4 * self.game.r)
