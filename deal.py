@@ -4,8 +4,6 @@ from inputProperty import InputProperty
 
 class Deal:
     def __init__(self, game):
-        if game.players == []:
-            return
         self.game = game
         self.inputOffererMoney = InputText(self.game, None, pygame.Color(195,195,195), True)
         self.inputOffererMoney.text = '0'

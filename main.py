@@ -201,7 +201,7 @@ class Game:
                         if box.rect.collidepoint(event.pos):
                             self.popups.append(Card(self, box))
                             break
-                    if self.sidebar.deal_rect.collidepoint(event.pos):
+                    if self.sidebar.deal_rect.collidepoint(event.pos) and self.players:
                         self.popups.append(Deal(self))
 
                 if event.type == pygame.KEYDOWN:
