@@ -18,7 +18,7 @@ class Popup:
         x = margin * width
         y = margin * height
         for word in text.split(" "):
-            word_surface = font.render(word, True, pygame.Color(255, 255, 255))
+            word_surface = font.render(word, True, pygame.Color(0,0,0))
             word_width, word_height = word_surface.get_size()
             if x + word_width >= width * (1 - margin):
                 x = margin * width
@@ -104,35 +104,3 @@ class OkPopup(Popup):
                 if self.resolve_ok is not None:
                     self.resolve_ok()
                 self.game.popups.remove(self)
-
-
-class SelectPlayer(Popup):
-    def __init__(self, game, text, resolve):
-        super().__init__(game, text)
-        self.resolve = resolve
-        self.rects = []
-        self.update()
-    
-    def update(self):
-        width, height = self.image.get_size()
-        length = width * 0.15
-
-        for i, player in enumerate(self.game.players):
-            p = pygame.transform.scale(
-                pygame.image.load("assets/popup.png"), (length, length)
-            )
-            p.blit(pygame.font.Font(None, 32).render(player.address, True, pygame.Color(255, 255, 255)), (0,0))
-            self.image.blit(p, (width - (i+1) * length, height - 1.2 * length))
-            rect = p.get_rect()
-            rect.move_ip(
-                self.game.width - self.game.height/2 - self.image.get_width() / 2 + width - i * length,
-                self.game.height / 2 - self.image.get_height() / 2 + height - 1.2 * length,
-            )
-            self.rects.append(rect)
-
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            for rect in self.rects:
-                if rect.collidepoint(event.pos):
-                    self.resolve(self.game.players[self.rects.index(rect)])
-                    self.game.popups.remove(self)

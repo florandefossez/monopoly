@@ -1,9 +1,7 @@
 # TODO list
 
 # BUG
-- socketmanager broadcast raw_msg n'a plus de header !
-- payer +10% sur la levé d'hypothèque
-- missing 1 chance card
+
 
 # fonc
 - refaire plateau
@@ -12,16 +10,14 @@
 - auto scale la font size
 - sidebar
 - deal window
-- indication hypothèque
 - ajouter un bruit sur la position des pions, des maisons et les dés
 - game over
-- get_out_of_prison_card
 - Support for saving and loading game progress.
 - detache closeRect
 - animation des pions
 
 
-# proerties color RGB
+# properties color RGB
 
 color = {
     0: pygame.Color(148,72,40),
