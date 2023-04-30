@@ -199,7 +199,7 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for box in Box.boxes:
                         if box.rect.collidepoint(event.pos):
-                            self.popups.append(Card(self, box))
+                            self.popups.append(Card(self, box, True))
                             break
                     if self.sidebar.deal_rect.collidepoint(event.pos) and self.players:
                         self.popups.append(Deal(self))

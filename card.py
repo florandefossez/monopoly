@@ -3,7 +3,7 @@ from box import Box, Street, Gare, Company, Special
 
 
 class Card:
-    def __new__(cls, game, box):
+    def __new__(cls, game, box, close):
         if isinstance(box, Street):
             obj = object.__new__(StreetCard)
         elif isinstance(box, Gare):
@@ -14,10 +14,11 @@ class Card:
             obj = object.__new__(SpecialCard)
         return obj
 
-    def __init__(self, game, box):
+    def __init__(self, game, box, close):
         self.game = game
         self.box = box
         self.image = None
+        self.close = close
 
     def update(self):
         if self.image is None:
@@ -31,6 +32,7 @@ class Card:
             0.15 * self.game.height / 3,
             0.15 * self.game.height / 3,
         )
+        self.close_image = pygame.transform.scale(pygame.image.load("assets/close.png"), self.closeRect.size)
         self.blit_title(self.box.name)
 
     def blit_title(self, name):
@@ -62,6 +64,8 @@ class Card:
                 self.game.height / 2 - self.card.get_height() / 2,
             ),
         )
+        if self.close:
+            self.game.screen.blit(self.close_image, self.closeRect.move(-5,-5))
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -74,8 +78,8 @@ class Card:
 
 
 class StreetCard(Card):
-    def __init__(self, game, box):
-        super().__init__(game, box)
+    def __init__(self, game, box, close):
+        super().__init__(game, box, close)
         self.image = pygame.image.load(f"assets/street/card{box.color}.png")
         self.update()
         
@@ -130,8 +134,8 @@ class StreetCard(Card):
 
 
 class GareCard(Card):
-    def __init__(self, game, box):
-        super().__init__(game, box)
+    def __init__(self, game, box, close):
+        super().__init__(game, box, close)
         self.image = pygame.image.load("assets/card.png")
         self.update()
 
@@ -159,8 +163,8 @@ class GareCard(Card):
 
 
 class CompanyCard(Card):
-    def __init__(self, game, box):
-        super().__init__(game, box)
+    def __init__(self, game, box, close):
+        super().__init__(game, box, close)
         self.image = pygame.image.load("assets/card.png")
         self.update()
 
@@ -188,8 +192,8 @@ class CompanyCard(Card):
 
 
 class SpecialCard(Card):
-    def __init__(self, game, box):
-        super().__init__(game, box)
+    def __init__(self, game, box, close):
+        super().__init__(game, box, close)
 
     def draw(self):
         print("Nothing to Draw")
