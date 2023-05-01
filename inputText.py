@@ -29,7 +29,7 @@ class InputText:
     
     def draw(self):
         self.input_box.fill(self.background)
-        txt_surface = self.font.render(self.text, True, pygame.Color("white"))
+        txt_surface = self.font.render(self.text, True, pygame.Color(0,0,0))
         self.input_box.blit(txt_surface, (0.3 * self.rect.w, 0.2 * self.rect.h))
         self.game.screen.blit(self.input_box, self.rect)
         pygame.draw.rect(self.game.screen, self.color, self.rect.inflate(2,2), 2, 5)

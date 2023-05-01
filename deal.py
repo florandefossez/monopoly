@@ -6,9 +6,9 @@ class Deal:
     def __init__(self, game):
         self.game = game
         self.inputOffererMoney = InputText(self.game, None, pygame.Color(195,195,195), True)
-        self.inputOffererMoney.text = '0'
+        self.inputOffererMoney.text = ''
         self.inputRecipientMoney = InputText(self.game, None, pygame.Color(195,195,195), True)
-        self.inputRecipientMoney.text = '0'
+        self.inputRecipientMoney.text = ''
 
         self.inputOffererProperty = InputProperty(self.game, self.game.myself)
         self.recipient = 0
@@ -18,53 +18,54 @@ class Deal:
 
     def update(self):
         self.image = pygame.transform.smoothscale(
-            pygame.image.load("assets/deal.png"),
+            pygame.image.load("assets/popup.png"),
             (0.69 * self.game.height, 0.5 * self.game.height)
         )
+        
         self.closeRect = pygame.Rect(
             self.game.width - 0.843 * self.game.height,
-            0.5 * self.game.height - 0.25 * self.game.height,
+            0.25 * self.game.height,
             0.05 * self.game.height,
             0.05 * self.game.height
         )
+        self.close_image = pygame.transform.smoothscale(
+            pygame.image.load("assets/close.png"),
+            self.closeRect.size
+        )
+
         self.dealRect = pygame.Rect(
-            self.game.width - 0.565 * self.game.height,
-            0.68 * self.game.height,
+            (0.69/2 - 0.13/2)*self.game.height,
+            (0.5-0.06/2) * self.game.height,
             0.13 * self.game.height,
             0.06 * self.game.height
+        ).move(*self.closeRect.topleft)
+        self.deal_image = pygame.transform.smoothscale(
+            pygame.image.load("assets/deal_button.png"),
+            self.dealRect.size
         )
+
         self.recipientRect = pygame.Rect(
-            self.game.width - 0.3554 * self.game.height,
-            0.292 * self.game.height,
+            (3*0.69/4 - 0.026) * self.game.height,
+            0.04 * self.game.height,
             0.052 * self.game.height,
             0.052 * self.game.height
-        )
+        ).move(*self.closeRect.topleft)
 
         self.inputOffererMoney.update(pygame.Rect(
-            self.game.width - 0.843 * self.game.height + 0.69 * self.game.height/2/6,
-            0.292 * self.game.height + 0.15*0.5 * self.game.height,
+            (0.69/4 - 0.15/2) * self.game.height,
+            0.25*0.5 * self.game.height,
             0.15 * self.game.height,
             0.052 * self.game.height
-        ))
-        self.inputRecipientMoney.update(pygame.Rect(
-            self.game.width - 0.843 * self.game.height + 0.69 * self.game.height/2/6 + 0.69 * self.game.height/2,
-            0.292 * self.game.height + 0.15*0.5 * self.game.height,
-            0.15 * self.game.height,
-            0.052 * self.game.height
-        ))
+        ).move(*self.closeRect.topleft))
+        self.inputRecipientMoney.update(self.inputOffererMoney.rect.move(0.69/2*self.game.height,0))
 
         self.inputOffererProperty.update(pygame.Rect(
-            self.game.width - 0.843 * self.game.height + 0.69 * self.game.height/2/6,
-            0.292 * self.game.height + 0.30*0.5 * self.game.height,
-            3*0.69/10*self.game.height,
-            3*0.69/10*4/3 * self.game.height
-        ))
-        self.inputRecipientProperty.update(pygame.Rect(
-            self.game.width - 0.843 * self.game.height + 0.69 * self.game.height/2/6 + 0.69 * self.game.height/2,
-            0.292 * self.game.height + 0.30*0.5 * self.game.height,
-            3*0.69/10*self.game.height,
-            3*0.69/10*4/3 * self.game.height
-        ))
+            (0.69/4 - 0.25*0.69/2) * self.game.height,
+            0.4*0.5 * self.game.height,
+            0.25*0.69      * self.game.height,
+            0.25*0.69 *4/3 * self.game.height
+        ).move(*self.closeRect.topleft))
+        self.inputRecipientProperty.update(self.inputOffererProperty.rect.move(0.69/2*self.game.height,0))
 
     def draw(self):
         # image
@@ -72,28 +73,34 @@ class Deal:
             self.image,
             self.closeRect
         )
+        # close
+        self.game.screen.blit(
+            self.close_image,
+            self.closeRect
+        )
         # offerer image
         self.game.screen.blit(
             self.game.myself.image,
-            self.recipientRect.move(- 1.37*self.game.height/4, 0)
+            self.recipientRect.move(- 0.69/2*self.game.height, 0)
         )
         # recipient image
         self.game.screen.blit(
             self.game.players[self.recipient].image,
             self.recipientRect
         )
+        pygame.draw.rect(self.game.screen, InputText.color_inactive, self.recipientRect.inflate(8,8), 2, 5)
         # money
         self.inputOffererMoney.draw()
         self.inputRecipientMoney.draw()
         # property
         self.inputOffererProperty.draw()
         self.inputRecipientProperty.draw()
+        # deal_button
+        self.game.screen.blit(
+            self.deal_image,
+            self.dealRect
+        )
 
-
-        # close = pygame.Surface(self.dealRect.size)
-        # close.fill(pygame.Color(50,50,50,10))
-        # self.game.screen.blit(close, self.dealRect)
-    
     def handle_event(self, event):
         self.inputOffererMoney.handle_event(event)
         self.inputRecipientMoney.handle_event(event)

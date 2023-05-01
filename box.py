@@ -1,7 +1,7 @@
 import pygame
 import json
 import random
-from popup import OkPopup, YesNoPopup, SelectPlayer
+from popup import OkPopup, YesNoPopup
 
 
 class Box:

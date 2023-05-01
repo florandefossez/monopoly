@@ -22,7 +22,7 @@ class InputProperty:
             self.input_box = pygame.image.load("assets/card.png")
         else:
             box = self.properties[self.selectedProperty]
-            self.input_box = Card(self.game, box).card
+            self.input_box = Card(self.game, box, False).card
         
         self.input_box = pygame.transform.smoothscale(self.input_box, self.rect.size)
     

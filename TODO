@@ -15,6 +15,7 @@
 - Support for saving and loading game progress.
 - detache closeRect
 - animation des pions
+- ajouter enter key
 
 
 # properties color RGB

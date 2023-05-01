@@ -13,7 +13,7 @@ class ReceiveDeal:
 
     def update(self):
         self.image = pygame.transform.smoothscale(
-            pygame.image.load("assets/deal.png"),
+            pygame.image.load("assets/popup.png"),
             (0.69 * self.game.height, 0.5 * self.game.height)
         )
         self.closeRect = pygame.Rect(
@@ -22,18 +22,21 @@ class ReceiveDeal:
             0.05 * self.game.height,
             0.05 * self.game.height
         )
-        self.acceptRect = pygame.Rect(
-            self.game.width - 0.565 * self.game.height,
-            0.68 * self.game.height,
-            0.13 * self.game.height,
-            0.06 * self.game.height
-        )
-        # self.declineRect = pygame.Rect(
-        #     self.game.width - 0.565 * self.game.height,
-        #     0.68 * self.game.height,
-        #     0.13 * self.game.height,
-        #     0.06 * self.game.height
-        # )
+        self.norect = pygame.Rect(
+            (0.69/4 - 0.5*0.15/2) * self.game.height,
+            (0.5 - 0.5*0.15/2) * self.game.height,
+            0.5 * 0.15 * self.game.height,
+            0.5 * 0.15 * self.game.height
+        ).move(*self.closeRect.topleft)
+        self.no = pygame.transform.smoothscale(pygame.image.load("assets/cancel.png"), self.norect.size)
+        self.yesrect = pygame.Rect(
+            (3*0.69/4 - 0.5*0.15/2) * self.game.height,
+            (0.5 - 0.5*0.15/2) * self.game.height,
+            0.5 * 0.15 * self.game.height,
+            0.5 * 0.15 * self.game.height
+        ).move(*self.closeRect.topleft)
+        self.yes = pygame.transform.smoothscale(pygame.image.load("assets/valid.png"), self.yesrect.size)
+
         self.recipientRect = pygame.Rect(
             self.game.width - 0.3554 * self.game.height,
             0.292 * self.game.height,
@@ -41,21 +44,9 @@ class ReceiveDeal:
             0.052 * self.game.height
         )
 
-        font = pygame.font.Font(None, 20)
-        self.inputOffererMoney = font.render(str(self.deal["offer"]["money"]), True, pygame.color.Color(0,0,0))
-        self.inputOffererMoneyRect = pygame.Rect(
-            self.game.width - 0.843 * self.game.height + 0.69 * self.game.height/2/6,
-            0.292 * self.game.height + 0.15*0.5 * self.game.height,
-            0.15 * self.game.height,
-            0.052 * self.game.height
-        )
-        self.inputRecipientMoney = font.render(str(self.deal["request"]["money"]), True, pygame.color.Color(0,0,0))
-        self.inputRecipientMoneyRect = pygame.Rect(
-            self.game.width - 0.843 * self.game.height + 0.69 * self.game.height/2/6 + 0.69 * self.game.height/2,
-            0.292 * self.game.height + 0.15*0.5 * self.game.height,
-            0.15 * self.game.height,
-            0.052 * self.game.height
-        )
+        font = pygame.font.Font(None, int(self.game.height/10))
+        self.inputOffererMoney = font.render(str(self.deal["offer"]["money"]) + " $", True, pygame.color.Color(0,0,0))
+        self.inputRecipientMoney = font.render(str(self.deal["request"]["money"])+ " $", True, pygame.color.Color(0,0,0))
 
         self.inputOffererPropertyRect = pygame.Rect(
             self.game.width - 0.843 * self.game.height + 0.69 * self.game.height/2/6,
@@ -71,13 +62,13 @@ class ReceiveDeal:
         )
 
         if (i:=self.deal["offer"]["property"]) is not None:
-            self.inputOffererProperty = Card(self.game, Box.boxes[i]).card
+            self.inputOffererProperty = Card(self.game, Box.boxes[i], False).card
         else:
             self.inputOffererProperty = pygame.image.load("assets/card.png")
         self.inputOffererProperty = pygame.transform.smoothscale(self.inputOffererProperty, self.inputOffererPropertyRect.size)
         
         if (i:=self.deal["request"]["property"]) is not None:
-            self.inputRecipientProperty = Card(self.game, Box.boxes[i]).card
+            self.inputRecipientProperty = Card(self.game, Box.boxes[i], False).card
         else:
             self.inputRecipientProperty = pygame.image.load("assets/card.png")
         self.inputRecipientProperty = pygame.transform.smoothscale(self.inputRecipientProperty, self.inputRecipientPropertyRect.size)
@@ -101,11 +92,13 @@ class ReceiveDeal:
         # money
         self.game.screen.blit(
             self.inputOffererMoney,
-            self.inputOffererMoneyRect
+            (self.game.width - 0.843 * self.game.height + 0.69 * self.game.height/2/6,
+            0.292 * self.game.height + 0.15*0.5 * self.game.height)
         )
         self.game.screen.blit(
             self.inputRecipientMoney,
-            self.inputRecipientMoneyRect
+            (self.game.width - 0.843 * self.game.height + 0.69 * self.game.height/2/6 + 0.69 * self.game.height/2,
+            0.292 * self.game.height + 0.15*0.5 * self.game.height)
         )
         # property
         self.game.screen.blit(
@@ -117,14 +110,24 @@ class ReceiveDeal:
             self.inputRecipientPropertyRect
         )
 
+        # buttons
+        self.game.screen.blit(
+            self.yes,
+            self.yesrect
+        )
+        self.game.screen.blit(
+            self.no,
+            self.norect
+        )
+
     
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.closeRect.collidepoint(event.pos):
+            if self.norect.collidepoint(event.pos):
                 self.game.popups.remove(self)
                 self.game.socket_manager.send_private_msg(f"{self.game.myself.name} a décliné votre offre !", self.offerer.name)
 
-            if self.acceptRect.collidepoint(event.pos):
+            if self.yesrect.collidepoint(event.pos):
                 self.game.popups.remove(self)
                 self.game.myself.pay(self.deal["request"]["money"])
                 self.game.myself.earn(self.deal["offer"]["money"])

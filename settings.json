@@ -1,6 +1,6 @@
 {
     "mode_online": true,
-    "n_client": 2,
+    "n_client": 1,
     "server": true,
     "image": "hat",
     "local_ip": "localhost",

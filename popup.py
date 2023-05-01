@@ -4,7 +4,7 @@ import pygame
 class Popup:
     def __init__(self, game, text):
         self.game = game
-        self.image = pygame.transform.scale(
+        self.image = pygame.transform.smoothscale(
             pygame.image.load("assets/popup.png"),
             (0.5 * game.height, 0.3 * game.height),
         )
