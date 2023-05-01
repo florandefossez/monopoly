@@ -80,6 +80,18 @@ class Card:
 
 
 class StreetCard(Card):
+    text = [
+        "terrain nu ",
+        "1 maison ",
+        "2 maisons ",
+        "3 maisons ",
+        "4 maisons ",
+        "1 hôtel ",
+        "",
+        "construction ",
+        "hypothèque ",
+    ]
+
     def __init__(self, game, box, close):
         super().__init__(game, box, close)
         self.image = pygame.image.load(f"assets/street/card{box.color}.png")
@@ -89,10 +101,15 @@ class StreetCard(Card):
         # card, title, closeRect
         super().update()
         width, height = self.card.get_size()
-        font = pygame.font.Font(None, 30 * width // 233)
+        font = pygame.font.SysFont("calibri", 20 * width // 233)
         # display prices
         i = 0
         for price in self.box.rent:
+            word_surface = font.render(StreetCard.text[i], True, pygame.Color(0, 0, 0))
+            self.card.blit(
+                word_surface,
+                (0.2 * width, 0.25 * height + word_surface.get_height() * i),
+            )
             word_surface = font.render(str(price), True, pygame.Color(0, 0, 0))
             self.card.blit(
                 word_surface,
@@ -101,10 +118,15 @@ class StreetCard(Card):
             i += 1
         i += 1
         for price in (self.box.house_price, self.box.base_price // 2):
+            word_surface = font.render(StreetCard.text[i], True, pygame.Color(0, 0, 0))
+            self.card.blit(
+                word_surface,
+                (0.2 * width, 0.25 * height + word_surface.get_height() * i),
+            )
             word_surface = font.render(str(price), True, pygame.Color(0, 0, 0))
             self.card.blit(
                 word_surface,
-                (0.7 * width, 0.20 * height + word_surface.get_height() * i),
+                (0.7 * width, 0.25 * height + word_surface.get_height() * i),
             )
             i += 1
 
@@ -135,6 +157,8 @@ class StreetCard(Card):
 
 
 class GareCard(Card):
+    text = ["Gare seul", "Deux gares", "Trois gares", "Quatres gares", "", "hypothèque"]
+
     def __init__(self, game, box, close):
         super().__init__(game, box, close)
         self.image = pygame.image.load("assets/card.png")
@@ -142,8 +166,33 @@ class GareCard(Card):
 
     def update(self):
         super().update()
-        width, height = self.image.get_size()
-        # font = pygame.font.Font(None, 32)
+        width, height = self.card.get_size()
+        font = pygame.font.SysFont("calibri", 20 * width // 233)
+        # display prices
+        i = 0
+        for price in [50, 100, 150, 200]:
+            word_surface = font.render(GareCard.text[i], True, pygame.Color(0, 0, 0))
+            self.card.blit(
+                word_surface,
+                (0.2 * width, 0.3 * height + 1.2 * word_surface.get_height() * i),
+            )
+            word_surface = font.render(str(price), True, pygame.Color(0, 0, 0))
+            self.card.blit(
+                word_surface,
+                (0.7 * width, 0.3 * height + 1.2 * word_surface.get_height() * i),
+            )
+            i += 1
+        i += 1
+        word_surface = font.render(GareCard.text[i], True, pygame.Color(0, 0, 0))
+        self.card.blit(
+            word_surface,
+            (0.2 * width, 0.3 * height + 1.2 * word_surface.get_height() * i),
+        )
+        word_surface = font.render("100", True, pygame.Color(0, 0, 0))
+        self.card.blit(
+            word_surface,
+            (0.7 * width, 0.3 * height + 1.2 * word_surface.get_height() * i),
+        )
 
         # manage bottom buttons
         a = 0.15 * width
@@ -164,6 +213,18 @@ class GareCard(Card):
 
 
 class CompanyCard(Card):
+    text = [
+        "Si vous possèdez une",
+        "companie, touchez 4",
+        "fois le score des dés.",
+        "",
+        "Si vous possèdez les",
+        "2 companies, touchez",
+        "10 fois le score des dès",
+        "",
+        "hypothèque       75",
+    ]
+
     def __init__(self, game, box, close):
         super().__init__(game, box, close)
         self.image = pygame.image.load("assets/card.png")
@@ -171,8 +232,17 @@ class CompanyCard(Card):
 
     def update(self):
         super().update()
-        width, height = self.image.get_size()
-        # font = pygame.font.Font(None, 32)
+        width, height = self.card.get_size()
+        font = pygame.font.SysFont("calibri", 20 * width // 233)
+        # display prices
+        i = 0
+        for t in CompanyCard.text:
+            word_surface = font.render(t, True, pygame.Color(0, 0, 0))
+            self.card.blit(
+                word_surface,
+                (0.15 * width, 0.25 * height + word_surface.get_height() * i),
+            )
+            i += 1
 
         # manage bottom buttons
         a = 0.15 * width

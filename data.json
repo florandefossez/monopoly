@@ -77,7 +77,7 @@
         "rent": [10, 50, 150, 450, 625, 750]
     },
     {
-        "name": "Companie de Distribution d'électricité",
+        "name": "Companie d'électricité",
         "type": "company",
         "method": "electricity"
     },
@@ -185,7 +185,7 @@
         "rent": [22, 110, 330, 800, 975, 1150]
     },
     {
-        "name": "Companie de Distribution des eaux", 
+        "name": "Companie des eaux", 
         "type": "company", 
         "method": "water"
     },
