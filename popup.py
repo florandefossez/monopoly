@@ -4,21 +4,22 @@ import pygame
 class Popup:
     def __init__(self, game, text):
         self.game = game
+        self.text = text
         self.image = pygame.transform.smoothscale(
             pygame.image.load("assets/popup.png"),
             (0.5 * game.height, 0.3 * game.height),
         )
-        self.blit_text(text)
+        self.font = pygame.font.SysFont("calibri", 8 * self.game.height // 233)
+        self.blit_text()
 
-    def blit_text(self, text):
+    def blit_text(self):
         margin = 0.1
-        font = pygame.font.Font(None, 32)
-        space = font.size(" ")[0]
+        space = self.font.size(" ")[0]
         width, height = self.image.get_size()
         x = margin * width
         y = margin * height
-        for word in text.split(" "):
-            word_surface = font.render(word, True, pygame.Color(0, 0, 0))
+        for word in self.text.split(" "):
+            word_surface = self.font.render(word, True, pygame.Color(0, 0, 0))
             word_width, word_height = word_surface.get_size()
             if x + word_width >= width * (1 - margin):
                 x = margin * width
@@ -36,7 +37,12 @@ class Popup:
         )
 
     def update(self):
-        pass
+        self.image = pygame.transform.smoothscale(
+            pygame.image.load("assets/popup.png"),
+            (0.5 * self.game.height, 0.3 * self.game.height),
+        )
+        self.font = pygame.font.SysFont("calibri", 8 * self.game.height // 233)
+        self.blit_text()
 
 
 class YesNoPopup(Popup):
@@ -47,6 +53,7 @@ class YesNoPopup(Popup):
         self.update()
 
     def update(self):
+        super().update()
         width, height = self.image.get_size()
         length = width * 0.15
         yes = pygame.transform.scale(
@@ -92,6 +99,7 @@ class OkPopup(Popup):
         self.update()
 
     def update(self):
+        super().update()
         width, height = self.image.get_size()
         length = width * 0.15
         ok = pygame.transform.scale(
