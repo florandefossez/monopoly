@@ -24,7 +24,7 @@ class Card:
         if self.image is None:
             raise Exception("Image card is not loaded")
         self.card = pygame.transform.scale(
-            self.image , (self.game.height / 3, 4 * self.game.height / 9)
+            self.image, (self.game.height / 3, 4 * self.game.height / 9)
         )
         self.closeRect = pygame.Rect(
             self.game.width - self.game.height / 2 - self.card.get_width() / 2,
@@ -32,12 +32,14 @@ class Card:
             0.15 * self.game.height / 3,
             0.15 * self.game.height / 3,
         )
-        self.close_image = pygame.transform.scale(pygame.image.load("assets/close.png"), self.closeRect.size)
+        self.close_image = pygame.transform.scale(
+            pygame.image.load("assets/close.png"), self.closeRect.size
+        )
         self.blit_title(self.box.name)
 
     def blit_title(self, name):
         margin = 0.25
-        font = pygame.font.SysFont("calibri", 25*self.card.get_width()//233)
+        font = pygame.font.SysFont("calibri", 25 * self.card.get_width() // 233)
 
         width, height = self.card.get_size()
         y = 0.05 * height
@@ -65,7 +67,7 @@ class Card:
             ),
         )
         if self.close:
-            self.game.screen.blit(self.close_image, self.closeRect.move(-5,-5))
+            self.game.screen.blit(self.close_image, self.closeRect.move(-5, -5))
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -82,13 +84,12 @@ class StreetCard(Card):
         super().__init__(game, box, close)
         self.image = pygame.image.load(f"assets/street/card{box.color}.png")
         self.update()
-        
 
     def update(self):
         # card, title, closeRect
         super().update()
         width, height = self.card.get_size()
-        font = pygame.font.Font(None, 30*width//233)
+        font = pygame.font.Font(None, 30 * width // 233)
         # display prices
         i = 0
         for price in self.box.rent:

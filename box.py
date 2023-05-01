@@ -81,7 +81,7 @@ class Box:
         if "n" not in data:
             raise (Exception(f"Error in box update {data}"))
         Box.boxes[data["n"]].update_from_dict(data)
-    
+
     @staticmethod
     def update():
         pass
@@ -90,14 +90,40 @@ class Box:
     def draw():
         l = Box.game.height / (9 + 2 * Box.game.r)
         for i in range(40):
-            if i in range(1,10) and getattr(Box.boxes[i], "player", None) is not None:
-                Box.game.screen.blit(Box.boxes[i].player.small_red_image if Box.boxes[i].in_mortgage else Box.boxes[i].player.small_image, Box.boxes[i].rect.move(l*0.35,-0.3*l))
-            if i in range(11,20) and getattr(Box.boxes[i], "player", None) is not None:
-                Box.game.screen.blit(pygame.transform.rotate(Box.boxes[i].player.small_red_image if Box.boxes[i].in_mortgage else Box.boxes[i].player.small_image ,270), Box.boxes[i].rect.move(Box.game.r*l,0.35*l))
-            if i in range(21,30) and getattr(Box.boxes[i], "player", None) is not None:
-                Box.game.screen.blit(Box.boxes[i].player.small_red_image if Box.boxes[i].in_mortgage else Box.boxes[i].player.small_image , Box.boxes[i].rect.move(l*0.35,Box.game.r*l))
-            if i in range(31,40) and getattr(Box.boxes[i], "player", None) is not None:
-                Box.game.screen.blit(pygame.transform.rotate(Box.boxes[i].player.small_red_image if Box.boxes[i].in_mortgage else Box.boxes[i].player.small_image ,90), Box.boxes[i].rect.move(-l*0.3,0.35*l))
+            if i in range(1, 10) and getattr(Box.boxes[i], "player", None) is not None:
+                Box.game.screen.blit(
+                    Box.boxes[i].player.small_red_image
+                    if Box.boxes[i].in_mortgage
+                    else Box.boxes[i].player.small_image,
+                    Box.boxes[i].rect.move(l * 0.35, -0.3 * l),
+                )
+            if i in range(11, 20) and getattr(Box.boxes[i], "player", None) is not None:
+                Box.game.screen.blit(
+                    pygame.transform.rotate(
+                        Box.boxes[i].player.small_red_image
+                        if Box.boxes[i].in_mortgage
+                        else Box.boxes[i].player.small_image,
+                        270,
+                    ),
+                    Box.boxes[i].rect.move(Box.game.r * l, 0.35 * l),
+                )
+            if i in range(21, 30) and getattr(Box.boxes[i], "player", None) is not None:
+                Box.game.screen.blit(
+                    Box.boxes[i].player.small_red_image
+                    if Box.boxes[i].in_mortgage
+                    else Box.boxes[i].player.small_image,
+                    Box.boxes[i].rect.move(l * 0.35, Box.game.r * l),
+                )
+            if i in range(31, 40) and getattr(Box.boxes[i], "player", None) is not None:
+                Box.game.screen.blit(
+                    pygame.transform.rotate(
+                        Box.boxes[i].player.small_red_image
+                        if Box.boxes[i].in_mortgage
+                        else Box.boxes[i].player.small_image,
+                        90,
+                    ),
+                    Box.boxes[i].rect.move(-l * 0.3, 0.35 * l),
+                )
 
 
 class Street(Box):
@@ -255,7 +281,11 @@ class Street(Box):
             self.game.myself.pay(self.base_price * 6 // 10)
             self.in_mortgage = False
             self.game.popups.insert(
-                0, OkPopup(self.game, f"L'hypothèque sur {self.name} a été levé pour {self.base_price * 6 // 10} $")
+                0,
+                OkPopup(
+                    self.game,
+                    f"L'hypothèque sur {self.name} a été levé pour {self.base_price * 6 // 10} $",
+                ),
             )
         elif self.houses != 0:
             self.game.popups.insert(
@@ -302,7 +332,6 @@ class Street(Box):
             return
         may_sell(self)
         return
-
 
     def draw_houses(self):
         if not self.houses:
@@ -450,7 +479,6 @@ class Gare(Box):
             )
             return
 
-
         elif self.in_mortgage:
             self.game.myself.earn(100)
             self.player = None
@@ -491,13 +519,19 @@ class Gare(Box):
             self.game.myself.pay(120)
             self.in_mortgage = False
             self.game.popups.insert(
-                0, OkPopup(self.game, f"L'hypothèque sur {self.name} a été levé pour 120 $")
+                0,
+                OkPopup(
+                    self.game, f"L'hypothèque sur {self.name} a été levé pour 120 $"
+                ),
             )
         else:
             self.game.myself.earn(100)
             self.in_mortgage = True
             self.game.popups.insert(
-                0, OkPopup(self.game, f"Vous avez hypothéqué {self.name} vous recevez 100 $")
+                0,
+                OkPopup(
+                    self.game, f"Vous avez hypothéqué {self.name} vous recevez 100 $"
+                ),
             )
         self.game.socket_manager.send_box(self)
         self.game.socket_manager.send_player(self.game.myself)
@@ -601,13 +635,19 @@ class Company(Box):
             self.game.myself.pay(90)
             self.in_mortgage = False
             self.game.popups.insert(
-                0, OkPopup(self.game, f"L'hypothèque sur {self.name} a été levé pour 90 $")
+                0,
+                OkPopup(
+                    self.game, f"L'hypothèque sur {self.name} a été levé pour 90 $"
+                ),
             )
         else:
             self.game.myself.earn(75)
             self.in_mortgage = True
             self.game.popups.insert(
-                0, OkPopup(self.game, f"Vous avez hypothéqué {self.name} vous recevez 75 $")
+                0,
+                OkPopup(
+                    self.game, f"Vous avez hypothéqué {self.name} vous recevez 75 $"
+                ),
             )
         self.game.socket_manager.send_box(self)
         self.game.socket_manager.send_player(self.game.myself)
@@ -618,7 +658,6 @@ class Company(Box):
                 0, OkPopup(self.game, "Cette propriété ne vous appartient pas")
             )
             return
-
 
         elif self.in_mortgage:
             self.game.myself.money += 75
@@ -668,9 +707,8 @@ class Company(Box):
 
 
 class Special(Box):
-
     with open("chance.json", "r", encoding="utf-8") as f:
-        chance= json.load(f)
+        chance = json.load(f)
     with open("community_chest.json", "r", encoding="utf-8") as f:
         community_chest = json.load(f)
 
@@ -747,26 +785,31 @@ class Special(Box):
         game.socket_manager.send_player(player)
         player.update_position()
         player.play()
-    
+
     def playcard(self, player, game, isChance):
-        if isChance: 
-            card = Special.chance[random.randint(0,14)]
+        if isChance:
+            card = Special.chance[random.randint(0, 14)]
         else:
-            card = Special.community_chest[random.randint(0,15)]
+            card = Special.community_chest[random.randint(0, 15)]
         match card["type"]:
             case "earn":
-                game.popups.append(OkPopup(
-                    game,
-                    card["text"],
-                    resolve_ok=lambda : player.earn(card["amount"])
-                ))
+                game.popups.append(
+                    OkPopup(
+                        game,
+                        card["text"],
+                        resolve_ok=lambda: player.earn(card["amount"]),
+                    )
+                )
             case "pay":
-                game.popups.append(OkPopup(
-                    game,
-                    card["text"],
-                    resolve_ok=lambda : player.pay(card["amount"])
-                ))
+                game.popups.append(
+                    OkPopup(
+                        game,
+                        card["text"],
+                        resolve_ok=lambda: player.pay(card["amount"]),
+                    )
+                )
             case "goto":
+
                 def goto(player, game, card):
                     if player.position > card["position"]:
                         player.money += 200
@@ -774,86 +817,95 @@ class Special(Box):
                     player.update_position()
                     game.socket_manager.send_player(player)
                     player.play()
-                game.popups.append(OkPopup(
-                    game,
-                    card["text"],
-                    resolve_ok=lambda : goto(player, game, card)
-                ))
+
+                game.popups.append(
+                    OkPopup(
+                        game, card["text"], resolve_ok=lambda: goto(player, game, card)
+                    )
+                )
             case "goto_prison":
                 game.socket_manager.send_player(player)
-                game.popups.append(OkPopup(game, card['text']))
+                game.popups.append(OkPopup(game, card["text"]))
                 player.prison_time = 2
                 player.position = 10
                 player.update_position()
             case "next_train_station":
+
                 def goto(player, game, card):
-                    player.position = (player.position+5)//10*10 + 5
+                    player.position = (player.position + 5) // 10 * 10 + 5
                     if player.position >= 40:
                         player.money += 200
                         player.position %= 40
                     player.update_position()
                     game.socket_manager.send_player(player)
                     player.play()
-                game.popups.append(OkPopup(
-                    game,
-                    card["text"],
-                    resolve_ok=lambda : goto(player, game, card)
-                ))
+
+                game.popups.append(
+                    OkPopup(
+                        game, card["text"], resolve_ok=lambda: goto(player, game, card)
+                    )
+                )
             case "next_company":
+
                 def goto(player, game, card):
-                    player.position = 28 if player.position in range(12,28) else 12
+                    player.position = 28 if player.position in range(12, 28) else 12
                     player.update_position()
                     game.socket_manager.send_player(player)
                     player.play()
-                game.popups.append(OkPopup(
-                    game,
-                    card["text"],
-                    resolve_ok=lambda : goto(player, game, card)
-                ))
+
+                game.popups.append(
+                    OkPopup(
+                        game, card["text"], resolve_ok=lambda: goto(player, game, card)
+                    )
+                )
             case "move_back":
+
                 def goto(player, game, card):
                     player.position -= 3
                     player.update_position()
                     game.socket_manager.send_player(player)
                     player.play()
-                game.popups.append(OkPopup(
-                    game,
-                    card["text"],
-                    resolve_ok=lambda : goto(player, game, card)
-                ))
+
+                game.popups.append(
+                    OkPopup(
+                        game, card["text"], resolve_ok=lambda: goto(player, game, card)
+                    )
+                )
             case "renovations":
                 price = 0
                 for box in Box.boxes:
                     if isinstance(box, Street) and box.player == player:
                         if box.houses < 5:
-                            price += box.houses*card["house"]
+                            price += box.houses * card["house"]
                         else:
                             price += card["hotel"]
-                game.popups.append(OkPopup(
-                    game,
-                    card["text"],
-                    resolve_ok=lambda : player.pay(price)
-                ))
+                game.popups.append(
+                    OkPopup(game, card["text"], resolve_ok=lambda: player.pay(price))
+                )
             case "get_out_of_prison":
                 player.get_out_of_prison_card += 1
                 game.popups.append(OkPopup(game, card["text"]))
             case "pay_everyone":
                 game.popups.append(OkPopup(game, card["text"]))
-                game.socket_manager.send_info(f"Vous recevez {card['amount']} $ de {player.name}.")
+                game.socket_manager.send_info(
+                    f"Vous recevez {card['amount']} $ de {player.name}."
+                )
                 price = 0
                 for p in game.players:
                     p.earn(card["amount"])
                     game.socket_manager.send_player(p)
-                    price += card['amount']
+                    price += card["amount"]
                 player.pay(price)
             case "earn_from_everyone":
                 game.popups.append(OkPopup(game, card["text"]))
-                game.socket_manager.send_info(f"Vous versez {card['amount']} $ à {player.name}.")
+                game.socket_manager.send_info(
+                    f"Vous versez {card['amount']} $ à {player.name}."
+                )
                 price = 0
                 for p in game.players:
                     p.pay(card["amount"])
                     game.socket_manager.send_player(p)
-                    price += card['amount']
+                    price += card["amount"]
                 player.earn(price)
 
     def to_dict(self):
@@ -863,38 +915,41 @@ class Special(Box):
         pass
 
 
-
-
 def may_sell(box):
     box.game.popups.insert(
         0,
         YesNoPopup(
             box.game,
             f"Voulez vous vendre {box.name} à la banque ?",
-            resolve_no=lambda : None,
-            resolve_yes=lambda : sell_to_bank(box)
-        ))
+            resolve_no=lambda: None,
+            resolve_yes=lambda: sell_to_bank(box),
+        ),
+    )
+
 
 def sell_to_bank(box):
     if box.in_mortgage:
-            box.game.myself.money += box.base_price/2
-            box.player = None
-            box.game.popups.insert(
-                0,
-                OkPopup(
-                    box.game, f"Vous avez vendu {box.name} à la banque pour {box.base_price/2} $"
-                ),
-            )
+        box.game.myself.money += box.base_price / 2
+        box.player = None
+        box.game.popups.insert(
+            0,
+            OkPopup(
+                box.game,
+                f"Vous avez vendu {box.name} à la banque pour {box.base_price/2} $",
+            ),
+        )
     else:
         box.game.myself.money += box.base_price
         box.player = None
         box.game.popups.insert(
             0,
             OkPopup(
-                box.game, f"Vous avez vendu {box.name} à la banque pour {box.base_price} $"
+                box.game,
+                f"Vous avez vendu {box.name} à la banque pour {box.base_price} $",
             ),
         )
     box.game.socket_manager.send_box(box)
     box.game.socket_manager.send_player(box.game.myself)
-    box.game.socket_manager.send_info(f"{box.game.myself.name} à vendu {box.name} à la banque")
-    
+    box.game.socket_manager.send_info(
+        f"{box.game.myself.name} à vendu {box.name} à la banque"
+    )

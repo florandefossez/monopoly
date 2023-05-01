@@ -19,12 +19,13 @@ class Player:
         image_size = (
             0.4 * self.game.height * self.game.r / (9 + 2 * self.game.r)
         )  # 0.4*L
-        small_image_size = 0.3*self.game.height / (9 + 2 * self.game.r) # 0.3*l
+        small_image_size = 0.3 * self.game.height / (9 + 2 * self.game.r)  # 0.3*l
         self.image = pygame.transform.smoothscale(
             pygame.image.load(f"assets/{self.address}.png"), (image_size, image_size)
         )
         self.small_image = pygame.transform.smoothscale(
-            pygame.image.load(f"assets/{self.address}.png"), (small_image_size, small_image_size)
+            pygame.image.load(f"assets/{self.address}.png"),
+            (small_image_size, small_image_size),
         )
         self.small_red_image = self.small_image.copy()
         self.small_red_image.fill((150, 0, 0, 200), None, pygame.BLEND_RGBA_MULT)
@@ -57,7 +58,7 @@ class Player:
 
     def pay(self, amount):
         self.money -= amount
-    
+
     def earn(self, amount):
         self.money += amount
 
@@ -71,7 +72,12 @@ class Player:
             self.game.screen.blit(self.image, self.rect)
 
     def to_dict(self):
-        return {"pos": self.position, "money": self.money, "name": self.name, "address":self.address}
+        return {
+            "pos": self.position,
+            "money": self.money,
+            "name": self.name,
+            "address": self.address,
+        }
 
     def _update_from_dict(self, data):
         if data.get("name") != self.name:
@@ -81,8 +87,8 @@ class Player:
         if "pos" in data:
             self.position = data["pos"]
             self.update_position()
-        if "address" in data and self.address != data['address']:
-            self.address = data['address']
+        if "address" in data and self.address != data["address"]:
+            self.address = data["address"]
             self.update_image()
 
     @staticmethod

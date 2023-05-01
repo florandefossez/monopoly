@@ -26,7 +26,7 @@ class Game:
         self.height = 720
         Box.load(self)
         self.parc = 0
-        self.myself = Player(self, self.settings['image'], self.settings["name"])
+        self.myself = Player(self, self.settings["image"], self.settings["name"])
         self.players = []
         self.popups = []
         self.dice1 = 1
@@ -135,7 +135,12 @@ class Game:
         while self.running:
             self.clock.tick(60)
             # end the turn ?
-            if not self.our_turn and self.send_end_turn and self.popups == [] and self.myself.money >= 0:
+            if (
+                not self.our_turn
+                and self.send_end_turn
+                and self.popups == []
+                and self.myself.money >= 0
+            ):
                 self.socket_manager.next_turn()
                 self.send_end_turn = False
 
@@ -170,14 +175,14 @@ class Game:
             for box in Box.boxes:
                 if isinstance(box, Street):
                     box.draw_houses()
-            
+
             # set boxes owners
             Box.draw()
 
             # turn indicator icon
-            s = pygame.Surface((20,20))
-            s.fill(pygame.Color(0,0,255*self.our_turn))
-            self.screen.blit(s, (0,self.height-20))
+            s = pygame.Surface((20, 20))
+            s.fill(pygame.Color(0, 0, 255 * self.our_turn))
+            self.screen.blit(s, (0, self.height - 20))
 
             # set popups
             if self.popups:

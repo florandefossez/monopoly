@@ -9,11 +9,9 @@
 - refaire cartes & popups
 - auto scale la font size
 - sidebar
-- deal window
 - ajouter un bruit sur la position des pions, des maisons et les dés
 - game over
 - Support for saving and loading game progress.
-- detache closeRect
 - animation des pions
 - ajouter enter key
 

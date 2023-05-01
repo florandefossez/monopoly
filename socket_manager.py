@@ -27,7 +27,7 @@ class SocketManager:
     def update_dice(self, data):
         self.game.dice1 = data["dice1"]
         self.game.dice2 = data["dice2"]
-    
+
     def deal(self, data):
         self.game.popups.append(ReceiveDeal(self.game, data))
 
@@ -39,10 +39,10 @@ class SocketManager:
 
     def send_dice(self):
         raise (Exception("should be handled by Client or Server subclass"))
-    
+
     def send_info(self, text):
         raise (Exception("should be handled by Client or Server subclass"))
-    
+
     @staticmethod
     def prepare_message(msg):
         body = bytes(json.dumps(msg), "utf-8")
@@ -77,7 +77,7 @@ class Server(SocketManager):
         msg = {
             "type": "presentation",
             "address": self.game.settings["image"],
-            "name": self.game.settings["name"]
+            "name": self.game.settings["name"],
         }
         self.broadcast(json.dumps(msg).encode("utf-8"), None)
         timeout = 0
@@ -90,7 +90,6 @@ class Server(SocketManager):
             msg["address"] = client[1].address
             msg["name"] = client[1].name
             self.broadcast(json.dumps(msg).encode("utf-8"), client[0])
-            
 
     def socket_thread(self, client):
         while self.game.running:
@@ -102,10 +101,12 @@ class Server(SocketManager):
                 msg = json.loads(raw_msg.decode())
             except Exception as e:
                 # empty buffer and continue
-                print(f"Failed to parse header {header}, {client.recv(4096).decode()}, {e}")
+                print(
+                    f"Failed to parse header {header}, {client.recv(4096).decode()}, {e}"
+                )
                 continue
 
-            if msg["type"] == "presentation": # first message from client
+            if msg["type"] == "presentation":  # first message from client
                 p = self.game.add_player(msg["address"], msg["name"])
                 for c in self.clients:
                     if c[0] == client:
@@ -132,8 +133,8 @@ class Server(SocketManager):
             elif msg["type"] == "dice":  # the client tossed the dices
                 self.update_dice(msg)
                 self.broadcast(raw_msg, client)
-            
-            elif msg["type"] == "deal": # someone send me a deal
+
+            elif msg["type"] == "deal":  # someone send me a deal
                 self.deal(msg)
 
     def next_turn(self):
@@ -171,13 +172,13 @@ class Server(SocketManager):
         msg = self.prepare_message(msg)
         for client in self.clients:
             client[0].send(msg)
-    
+
     def send_info(self, text):
         msg = {"type": "info", "text": text}
         msg = self.prepare_message(msg)
         for client in self.clients:
             client[0].send(msg)
-    
+
     def send_deal(self, deal):
         msg = self.prepare_message(deal)
         for client in self.clients:
@@ -185,22 +186,18 @@ class Server(SocketManager):
                 client[0].send(msg)
 
     def send_private_msg(self, text, recipient_name):
-        msg = {
-            "text": text,
-            "type": "msg",
-            "recipient": recipient_name
-        }
+        msg = {"text": text, "type": "msg", "recipient": recipient_name}
         msg = self.prepare_message(msg)
         for client in self.clients:
             if client[1].name == recipient_name:
                 client[0].send(msg)
-    
+
     def deal(self, data):
         if data["recipient"] == self.game.myself.name:
             super().deal(data)
         else:
             self.send_deal(data)
-    
+
     def private_msg(self, msg):
         if msg["recipient"] == self.game.myself.name:
             self.info(msg)
@@ -222,7 +219,7 @@ class Client(SocketManager):
         msg = {
             "type": "presentation",
             "address": self.game.settings["image"],
-            "name": self.game.settings["name"]
+            "name": self.game.settings["name"],
         }
         self.socket.send(self.prepare_message(msg))
         self.game.our_turn = False
@@ -238,10 +235,12 @@ class Client(SocketManager):
                 msg = json.loads(raw_msg.decode())
             except Exception as e:
                 # empty buffer and continue
-                print(f"Failed to parse header {header}, {server.recv(4096).decode()}, {e}")
+                print(
+                    f"Failed to parse header {header}, {server.recv(4096).decode()}, {e}"
+                )
                 continue
 
-            if msg["type"] == "presentation": # server send new player
+            if msg["type"] == "presentation":  # server send new player
                 self.game.add_player(msg["address"], msg["name"])
 
             elif msg["type"] == "your_turn":  # it's my turn
@@ -261,8 +260,8 @@ class Client(SocketManager):
 
             elif msg["type"] == "dice":  # someone tossed the dices
                 self.update_dice(msg)
-            
-            elif msg["type"] == "deal": # someone send me a deal
+
+            elif msg["type"] == "deal":  # someone send me a deal
                 self.deal(msg)
 
     def next_turn(self):
@@ -285,22 +284,18 @@ class Client(SocketManager):
         msg = {"type": "dice", "dice1": self.game.dice1, "dice2": self.game.dice2}
         msg = self.prepare_message(msg)
         self.socket.send(msg)
-    
+
     def send_info(self, text):
         msg = {"type": "info", "text": text}
         msg = self.prepare_message(msg)
         self.socket.send(msg)
-    
+
     def send_deal(self, deal):
         msg = self.prepare_message(deal)
         self.socket.send(msg)
-    
+
     def send_private_msg(self, text, recipient_name):
-        msg = {
-            "text": text,
-            "type": "msg",
-            "recipient": recipient_name
-        }
+        msg = {"text": text, "type": "msg", "recipient": recipient_name}
         msg = self.prepare_message(msg)
         self.socket.send(msg)
 

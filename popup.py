@@ -18,7 +18,7 @@ class Popup:
         x = margin * width
         y = margin * height
         for word in text.split(" "):
-            word_surface = font.render(word, True, pygame.Color(0,0,0))
+            word_surface = font.render(word, True, pygame.Color(0, 0, 0))
             word_width, word_height = word_surface.get_size()
             if x + word_width >= width * (1 - margin):
                 x = margin * width
@@ -34,7 +34,7 @@ class Popup:
                 self.game.height / 2 - self.image.get_height() / 2,
             ),
         )
-    
+
     def update(self):
         pass
 
@@ -59,12 +59,19 @@ class YesNoPopup(Popup):
         self.image.blit(no, (width - 2 * length, height - 1.2 * length))
         self.yesrect = yes.get_rect()
         self.yesrect.move_ip(
-            length + self.game.width - self.game.height/2 - self.image.get_width() / 2,
+            length
+            + self.game.width
+            - self.game.height / 2
+            - self.image.get_width() / 2,
             height - 1.2 * length + self.game.height / 2 - self.image.get_height() / 2,
         )
         self.norect = no.get_rect()
         self.norect.move_ip(
-            self.game.width - self.game.height/2 - self.image.get_width() / 2 + width - 2 * length,
+            self.game.width
+            - self.game.height / 2
+            - self.image.get_width() / 2
+            + width
+            - 2 * length,
             self.game.height / 2 - self.image.get_height() / 2 + height - 1.2 * length,
         )
 
@@ -94,7 +101,11 @@ class OkPopup(Popup):
 
         self.okrect = ok.get_rect()
         self.okrect.move_ip(
-            self.game.width - self.game.height/2 - self.image.get_width() / 2 + width / 2 - length / 2,
+            self.game.width
+            - self.game.height / 2
+            - self.image.get_width() / 2
+            + width / 2
+            - length / 2,
             self.game.height / 2 - self.image.get_height() / 2 + height - 1.2 * length,
         )
 
