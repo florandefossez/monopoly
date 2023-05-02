@@ -23,7 +23,9 @@ class Sidebar:
         rect = pygame.Rect(10, 10, 0, 0)
         for player in [self.game.myself, *self.game.players]:
             self.sidebar.blit(player.image, rect)
-            money = self.font.render(f"{player.money} $", True, pygame.Color(0, 0, 0))
+            money = self.font.render(
+                f"{player.money} $", True, pygame.Color(0, 0, 255 * player.his_turn)
+            )
             self.sidebar.blit(money, rect.move(player.image.get_height(), 0))
             rect.move_ip(0, player.image.get_height())
 

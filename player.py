@@ -14,6 +14,7 @@ class Player:
         self.frame = []
         self.update_image()
         self.get_out_of_prison_card = 0
+        self.his_turn = False
 
     def update_image(self):
         image_size = (

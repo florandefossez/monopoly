@@ -32,7 +32,6 @@ class Game:
         self.dice1 = 1
         self.dice2 = 1
         self.double_in_row = 0
-        self.our_turn = False
         self.send_end_turn = False
 
         if self.settings["server"]:
@@ -97,7 +96,7 @@ class Game:
             self.popups.append(
                 OkPopup(self, "3 doubles d'affilée : Vous allez en prison !")
             )
-            self.our_turn = False
+            self.myself.his_turn = False
             self.socket_manager.send_player(self.myself)
             return
 
@@ -117,7 +116,7 @@ class Game:
             self.double_in_row += 1
         else:
             self.double_in_row = 0
-            self.our_turn = False
+            self.myself.his_turn = False
 
         # send_updates for position
         self.socket_manager.send_player(self.myself)
@@ -136,7 +135,7 @@ class Game:
             self.clock.tick(60)
             # end the turn ?
             if (
-                not self.our_turn
+                not self.myself.his_turn
                 and self.send_end_turn
                 and self.popups == []
                 and self.myself.money >= 0
@@ -181,7 +180,7 @@ class Game:
 
             # turn indicator icon
             s = pygame.Surface((20, 20))
-            s.fill(pygame.Color(0, 0, 255 * self.our_turn))
+            s.fill(pygame.Color(0, 0, 255 * self.myself.his_turn))
             self.screen.blit(s, (0, self.height - 20))
 
             # set popups
@@ -210,7 +209,7 @@ class Game:
                         self.popups.append(Deal(self))
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE and self.our_turn:
+                    if event.key == pygame.K_SPACE and self.myself.his_turn:
                         self.new_turn()
 
         pygame.quit()

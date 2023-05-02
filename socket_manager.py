@@ -54,7 +54,7 @@ class Server(SocketManager):
     def __init__(self, game):
         super().__init__(game)
         self.clients = []
-        self.turn = -1
+        self.turn = self.game.settings["n_client"] - 1
 
         self.socket.bind(
             (self.game.settings["local_ip"], self.game.settings["local_port"])
@@ -63,15 +63,12 @@ class Server(SocketManager):
         self.socket.listen(5)
         while connected_player < self.game.settings["n_client"]:
             (clientsocket, address) = self.socket.accept()
-            # remote_player_image = clientsocket.recv(2048).decode()
-            # clientsocket.send(bytes(self.game.settings["image"], "utf-8"))
-            # self.game.add_player(remote_player_image, 'remote')
             self.clients.append([clientsocket, None])
             threading.Thread(target=self.socket_thread, args=(clientsocket,)).start()
             connected_player += 1
         self.socket.close()
         self.share_players()
-        self.game.our_turn = True
+        self.next_turn()
 
     def share_players(self):
         msg = {
@@ -138,13 +135,22 @@ class Server(SocketManager):
                 self.deal(msg)
 
     def next_turn(self):
+        for p in self.game.players:
+            p.his_turn = False
         if self.turn == self.game.settings["n_client"] - 1:
             self.turn = -1
-            self.game.our_turn = True
+            self.game.myself.his_turn = True
+            msg = self.prepare_message(
+                {"type": "new_turn", "player": self.game.myself.name}
+            )
         else:
             self.turn += 1
-            msg = self.prepare_message({"type": "your_turn"})
-            self.clients[self.turn][0].send(msg)
+            msg = self.prepare_message(
+                {"type": "new_turn", "player": self.clients[self.turn][1].name}
+            )
+            self.clients[self.turn][1].his_turn = True
+        for client in self.clients:
+            client[0].send(msg)
 
     def broadcast(self, raw_msg, source):
         header = str(len(raw_msg)).encode("utf-8").rjust(HEADER, b"0")
@@ -222,7 +228,6 @@ class Client(SocketManager):
             "name": self.game.settings["name"],
         }
         self.socket.send(self.prepare_message(msg))
-        self.game.our_turn = False
         threading.Thread(target=self.socket_thread, args=(self.socket,)).start()
 
     def socket_thread(self, server):
@@ -243,8 +248,15 @@ class Client(SocketManager):
             if msg["type"] == "presentation":  # server send new player
                 self.game.add_player(msg["address"], msg["name"])
 
-            elif msg["type"] == "your_turn":  # it's my turn
-                self.game.our_turn = True
+            elif msg["type"] == "new_turn":  # new turn
+                for p in self.game.players:
+                    p.his_turn = False
+                if msg["player"] == self.game.myself.name:
+                    self.game.myself.his_turn = True
+                else:
+                    [p for p in self.game.players if p.name == msg["player"]][
+                        0
+                    ].his_turn = True
 
             elif msg["type"] == "player":  # the server gives updates on a player
                 self.update_player(msg)
