@@ -83,13 +83,17 @@ class YesNoPopup(Popup):
         )
 
     def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.yesrect.collidepoint(event.pos):
-                self.resolve_yes()
-                self.game.popups.remove(self)
-            elif self.norect.collidepoint(event.pos):
-                self.resolve_no()
-                self.game.popups.remove(self)
+        if (
+            event.type == pygame.MOUSEBUTTONDOWN
+            and self.yesrect.collidepoint(event.pos)
+        ) or (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN):
+            self.resolve_yes()
+            self.game.popups.remove(self)
+        elif event.type == pygame.MOUSEBUTTONDOWN and self.norect.collidepoint(
+            event.pos
+        ):
+            self.resolve_no()
+            self.game.popups.remove(self)
 
 
 class OkPopup(Popup):
@@ -118,8 +122,9 @@ class OkPopup(Popup):
         )
 
     def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.okrect.collidepoint(event.pos):
-                if self.resolve_ok is not None:
-                    self.resolve_ok()
-                self.game.popups.remove(self)
+        if (
+            event.type == pygame.MOUSEBUTTONDOWN and self.okrect.collidepoint(event.pos)
+        ) or (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN):
+            if self.resolve_ok is not None:
+                self.resolve_ok()
+            self.game.popups.remove(self)
