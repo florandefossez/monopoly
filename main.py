@@ -205,8 +205,10 @@ class Game:
                         if box.rect.collidepoint(event.pos):
                             self.popups.append(Card(self, box, True))
                             break
-                    if self.sidebar.deal_rect.collidepoint(event.pos) and self.players:
+                    if self.sidebar.deal_rect.collidepoint(event.pos) and self.players and self.myself.his_turn:
                         self.popups.append(Deal(self))
+                    elif not self.myself.his_turn:
+                        self.popups.append(OkPopup(self, "Attendez votre tour pour émettre une proposition d'échange."))
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and self.myself.his_turn:
