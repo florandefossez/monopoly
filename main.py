@@ -11,7 +11,6 @@ from card import Card
 from popup import OkPopup, YesNoPopup
 from socket_manager import SocketManager, Server, Client
 from sidebar import Sidebar
-from deal import Deal
 
 
 class Game:
@@ -22,7 +21,7 @@ class Game:
         with open(args.path, "r") as f:
             self.settings = json.load(f)
 
-        self.width = 1080
+        self.width = 1280
         self.height = 720
         Box.load(self)
         self.parc = 0
@@ -178,11 +177,6 @@ class Game:
             # set boxes owners
             Box.draw()
 
-            # turn indicator icon
-            s = pygame.Surface((20, 20))
-            s.fill(pygame.Color(0, 0, 255 * self.myself.his_turn))
-            self.screen.blit(s, (0, self.height - 20))
-
             # set popups
             if self.popups:
                 self.popups[0].draw()
@@ -200,19 +194,16 @@ class Game:
                     self.popups[0].handle_event(event)
                     continue
 
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE and self.myself.his_turn:
+                        self.new_turn()
+                
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for box in Box.boxes:
                         if box.rect.collidepoint(event.pos):
                             self.popups.append(Card(self, box, True))
                             break
-                    if self.sidebar.deal_rect.collidepoint(event.pos) and self.players and self.myself.his_turn:
-                        self.popups.append(Deal(self))
-                    elif not self.myself.his_turn:
-                        self.popups.append(OkPopup(self, "Attendez votre tour pour émettre une proposition d'échange."))
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE and self.myself.his_turn:
-                        self.new_turn()
+                self.sidebar.handle_event(event)
 
         pygame.quit()
 
