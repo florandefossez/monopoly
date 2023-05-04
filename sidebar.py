@@ -16,17 +16,30 @@ class Sidebar:
         )
         self.sidebar.fill(pygame.Color(218, 233, 212))
 
-        # deal
+        # deal & abandon
         self.deal_rect = pygame.Rect(
-            (self.game.width - self.game.height) / 2 - 25, self.game.height - 20, 50, 15
+            0.06 * self.game.height,
+            0.90 * self.game.height,
+            0.13 * self.game.height,
+            0.06 * self.game.height
+        )
+        self.abandon_rect = self.deal_rect.move(0.2*self.game.height, 0)
+        self.deal = pygame.transform.smoothscale(
+            pygame.image.load("assets/deal_button.png"),
+            self.deal_rect.size
+        )
+        self.abandon = pygame.transform.smoothscale(
+            pygame.image.load("assets/abandon.png"),
+            self.deal_rect.size
         )
 
         # title
         self.title = pygame.font.SysFont("widelatin", self.game.height//20).render(f"MONOPOLY", True, pygame.Color(0,0,0))
         self.titleRect = pygame.Rect(max((self.game.width - self.game.height)/2 - self.title.get_width()/2,0), self.game.height/30,0,0)
 
-        # players
+        # players money font
         self.font = pygame.font.SysFont("calibri", self.game.height//20)
+
     
     def draw(self):
         # background
@@ -41,7 +54,12 @@ class Sidebar:
         l = self.game.myself.image.get_height()
         rect = pygame.Rect((self.game.width - self.game.height)/2 - 3.5*l, self.game.height//10, 7*l, self.game.height/200)
         for player in [self.game.myself, *self.game.players]:
-            self.game.screen.blit(player.green_image if player.his_turn else player.image, rect.move(0.5*l,0))
+            if player.his_turn:
+                self.game.screen.blit(player.green_image, rect.move(0.5*l,0))
+            elif player.position is None:
+                self.game.screen.blit(player.red_image, rect.move(0.5*l,0))
+            else:
+                self.game.screen.blit(player.image, rect.move(0.5*l,0))
             money = self.font.render(
                 f"{player.money} $", True, pygame.Color(31,165,76) if player.his_turn else pygame.Color(0, 0, 0)
             )
@@ -53,16 +71,24 @@ class Sidebar:
                 draw_bar -= 1
 
         # deal button
-        s = pygame.Surface(self.deal_rect.size)
-        s.fill(pygame.Color(0, 0, 0))
-        self.game.screen.blit(s, self.deal_rect)
+        self.game.screen.blit(self.deal, self.deal_rect)
+        self.game.screen.blit(self.abandon, self.abandon_rect)
 
     
     def handle_event(self, event):
         if not event.type == pygame.MOUSEBUTTONDOWN:
             return
-        if self.deal_rect.collidepoint(event.pos) and self.game.players and self.game.myself.his_turn:
-            self.game.popups.append(Deal(self.game))
-        elif not self.game.myself.his_turn:
-            self.game.popups.append(OkPopup(self.game, "Attendez votre tour pour émettre une proposition d'échange."))
-
+        if self.deal_rect.collidepoint(event.pos) and self.game.players:
+            if self.game.myself.his_turn:
+                self.game.popups.append(Deal(self.game))
+            else:
+                self.game.popups.append(OkPopup(self.game, "Attendez votre tour pour émettre une proposition d'échange."))
+        if self.abandon_rect.collidepoint(event.pos):
+            self.game.popups.append(
+                YesNoPopup(
+                    self.game,
+                    "Etes-vous sûr de vouloir abodonner la partie ?",
+                    resolve_no= lambda: None,
+                    resolve_yes= self.game.end
+                )
+            )

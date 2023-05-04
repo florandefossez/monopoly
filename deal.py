@@ -1,6 +1,7 @@
 import pygame
 from inputText import InputText
 from inputProperty import InputProperty
+from popup import OkPopup
 
 
 class Deal:
@@ -128,6 +129,9 @@ class Deal:
                 self.send()
 
     def send(self):
+        if self.game.players[self.recipient].position is None:
+            self.game.popups.append(OkPopup(self.game, f"{self.game.players[self.recipient].name} n'est plus joueur, vous ne pouvez pas le soumttre de proposition !"))
+            return
         deal = {
             "type": "deal",
             "offerer": self.game.myself.name,

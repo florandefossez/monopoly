@@ -27,6 +27,7 @@ class Game:
         self.parc = 0
         self.myself = Player(self, self.settings["image"], self.settings["name"])
         self.players = []
+        self.active_players = [self.myself]
         self.popups = []
         self.dice1 = 1
         self.dice2 = 1
@@ -50,6 +51,7 @@ class Game:
     def add_player(self, address, name):
         Newplayer = Player(self, address, name)
         self.players.append(Newplayer)
+        self.active_players.append(Newplayer)
         return Newplayer
 
     def load_assets(self):
@@ -77,8 +79,6 @@ class Game:
         # throw dice
         self.dice1 = randint(1, 6)
         self.dice2 = randint(1, 6)
-        # self.dice1 = 4
-        # self.dice2 = 6
         self.socket_manager.send_dice()
 
         # leave prison if double
@@ -119,15 +119,23 @@ class Game:
 
         # send_updates for position
         self.socket_manager.send_player(self.myself)
-
-        # game over ?
-        if self.myself.money < 0:
-            self.popups.append(
-                OkPopup(
-                    self,
-                    "Vous n'avez plus d'argent ! Trouvez un moyen de payer pour continuer.",
-                )
-            )
+    
+    def end(self):
+        self.socket_manager.send_abandon()
+        self.myself.position = None
+        self.socket_manager.send_player(self.myself)
+        self.active_players.remove(self.myself)
+        for box in Box.boxes:
+            if hasattr(box, "player") and box.player == self.myself:
+                box.player = None
+                box.in_mortgage = False
+                if hasattr(box, "houses"):
+                    box.houses = 0
+                self.socket_manager.send_box(box)
+        if self.myself.his_turn:
+            self.myself.his_turn = False
+            self.send_end_turn = False
+            self.socket_manager.next_turn()
 
     def run(self):
         while self.running:
@@ -161,8 +169,7 @@ class Game:
             self.screen.blit(self.background, (self.width - self.height, 0))
 
             # set players
-            self.myself.draw()
-            for player in self.players:
+            for player in self.active_players:
                 player.draw()
 
             # set dices
@@ -196,8 +203,16 @@ class Game:
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and self.myself.his_turn:
-                        self.new_turn()
-                
+                        if self.myself.money >= 0:
+                            self.new_turn()
+                        else:
+                            self.popups.append(
+                                OkPopup(
+                                    self,
+                                    "Vous n'avez plus d'argent ! Trouvez un moyen de payer pour continuer ou abandonnez.",
+                                )
+                            )
+                    
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for box in Box.boxes:
                         if box.rect.collidepoint(event.pos):

@@ -32,14 +32,19 @@ class Player:
         self.small_red_image.fill((150, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
         self.green_image = self.image.copy()
         self.green_image.fill((31, 165, 76, 255), None, pygame.BLEND_RGBA_MULT)
+        self.red_image = self.image.copy()
+        self.red_image.fill((255, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
         self.rect = self.image.get_rect()
         offset = (
             self.game.height * (1 - 0.4 * self.game.r) / (18 + 4 * self.game.r)
         )  # (l-0.4*L)/2
         self.offset = pygame.Rect(offset, offset, 0, 0)
-        self.update_position(1)
+        if self.position is not None:
+            self.update_position(1)
 
     def update_position(self, n_frame=50):
+        if self.position is None:
+            return
         self.box = Box.boxes[self.position]
         destination = self.box.rect.move(self.offset.topleft)
         if self.position in range(11):
@@ -69,6 +74,8 @@ class Player:
         Box.boxes[self.position].play(self, self.game)
 
     def draw(self):
+        if self.position is None:
+            return
         if self.frame:
             self.game.screen.blit(self.image, self.frame.pop(0))
         else:

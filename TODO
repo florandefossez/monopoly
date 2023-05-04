@@ -1,19 +1,21 @@
 # TODO list
 
 # BUG
-
+- game crash when h>w
 
 # fonc
-- refaire plateau
-- refaire pions
-- refaire cartes & popups
-- auto scale la font size
+- update readme
 - sidebar
+  - sortie de prison
+  - deals
+  - player turn
+  - player money
+  - historique
+- page title
 - ajouter un bruit sur la position des pions, des maisons et les dés
 - game over
 - Support for saving and loading game progress.
 - animation des pions
-- ajouter enter key
 
 
 # properties color RGB
@@ -28,3 +30,5 @@ color = {
     6: pygame.Color(31,165,76),
     7: pygame.Color(1,104,179)
 }
+
+pyinsaller main.py

@@ -891,7 +891,7 @@ class Special(Box):
                     f"Vous recevez {card['amount']} $ de {player.name}."
                 )
                 price = 0
-                for p in game.players:
+                for p in game.active_players:
                     p.earn(card["amount"])
                     game.socket_manager.send_player(p)
                     price += card["amount"]
@@ -902,7 +902,7 @@ class Special(Box):
                     f"Vous versez {card['amount']} $ à {player.name}."
                 )
                 price = 0
-                for p in game.players:
+                for p in game.active_players:
                     p.pay(card["amount"])
                     game.socket_manager.send_player(p)
                     price += card["amount"]
