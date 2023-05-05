@@ -48,6 +48,20 @@ class Game:
         self.dice_image = {}
         self.load_assets()
 
+    def okpopup(self, text, resolve_ok=None, foreground=False):
+        p = OkPopup(self, text, resolve_ok)
+        if foreground:
+            self.popups.insert(0, p)
+        else:
+            self.popups.append(p)
+
+    def yesnopopup(self, text, resolve_yes, resolve_no, foreground=False):
+        p = YesNoPopup(self, text, resolve_yes, resolve_no)
+        if foreground:
+            self.popups.insert(0, p)
+        else:
+            self.popups.append(p)
+
     def add_player(self, address, name):
         Newplayer = Player(self, address, name)
         self.players.append(Newplayer)
@@ -92,9 +106,7 @@ class Game:
 
             self.double_in_row = 0
             self.myself.update_position()
-            self.popups.append(
-                OkPopup(self, "3 doubles d'affilée : Vous allez en prison !")
-            )
+            self.okpopup("3 doubles d'affilée : Vous allez en prison !")
             self.myself.his_turn = False
             self.socket_manager.send_player(self.myself)
             return
@@ -119,7 +131,7 @@ class Game:
 
         # send_updates for position
         self.socket_manager.send_player(self.myself)
-    
+
     def end(self):
         self.socket_manager.send_abandon()
         self.myself.position = None
@@ -206,13 +218,10 @@ class Game:
                         if self.myself.money >= 0:
                             self.new_turn()
                         else:
-                            self.popups.append(
-                                OkPopup(
-                                    self,
-                                    "Vous n'avez plus d'argent ! Trouvez un moyen de payer pour continuer ou abandonnez.",
-                                )
+                            self.okpopup(
+                                "Vous n'avez plus d'argent ! Trouvez un moyen de payer pour continuer ou abandonnez."
                             )
-                    
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for box in Box.boxes:
                         if box.rect.collidepoint(event.pos):

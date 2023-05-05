@@ -3,7 +3,6 @@ import json
 import threading
 from player import Player
 from box import Box, Street, Gare, Company, Special
-from popup import OkPopup
 from receiveDeal import ReceiveDeal
 import pygame
 
@@ -22,7 +21,7 @@ class SocketManager:
         Box.update_from_dict(data)
 
     def info(self, msg):
-        self.game.popups.append(OkPopup(self.game, msg["text"]))
+        self.game.okpopup(msg["text"])
 
     def update_dice(self, data):
         self.game.dice1 = data["dice1"]
@@ -134,10 +133,12 @@ class Server(SocketManager):
 
             elif msg["type"] == "deal":  # someone send me a deal
                 self.deal(msg)
-            
+
             elif msg["type"] == "abandon":
-                self.game.popups.append(OkPopup(self.game, f"{msg['player']} a abandonné la partie"))
-                self.game.active_players.remove([p for p in self.game.players if p.name == msg['player']][0])
+                self.game.okpopup(f"{msg['player']} a abandonné la partie")
+                self.game.active_players.remove(
+                    [p for p in self.game.players if p.name == msg["player"]][0]
+                )
                 self.broadcast(raw_msg, client)
 
     def next_turn(self):
@@ -145,11 +146,11 @@ class Server(SocketManager):
 
         for p in players:
             p.his_turn = False
-        
-        self.turn = (1 + self.turn)%len(players)
+
+        self.turn = (1 + self.turn) % len(players)
         while players[self.turn].position is None:
-            self.turn = (1 + self.turn)%len(players)
-        
+            self.turn = (1 + self.turn) % len(players)
+
         players[self.turn].his_turn = True
         msg = self.prepare_message(
             {"type": "new_turn", "player": players[self.turn].name}
@@ -215,14 +216,13 @@ class Server(SocketManager):
             self.info(msg)
         else:
             self.send_private_msg(msg["text"], msg["recipient"])
-    
+
     def send_abandon(self):
-        msg = self.prepare_message({'type': "abandon", 'player': self.game.myself.name})
+        msg = self.prepare_message({"type": "abandon", "player": self.game.myself.name})
         for client in self.clients:
             client[0].send(msg)
         if self.game.myself.his_turn:
             self.next_turn()
-
 
     def close(self):
         for client in self.clients:
@@ -289,10 +289,12 @@ class Client(SocketManager):
 
             elif msg["type"] == "deal":  # someone send me a deal
                 self.deal(msg)
-            
-            elif msg['type'] == "abandon":
-                self.game.popups.append(OkPopup(self.game, f"{msg['player']} a abandonné la partie"))
-                self.game.active_players.remove([p for p in self.game.players if p.name == msg['player']][0])
+
+            elif msg["type"] == "abandon":
+                self.game.okpopup(f"{msg['player']} a abandonné la partie")
+                self.game.active_players.remove(
+                    [p for p in self.game.players if p.name == msg["player"]][0]
+                )
 
     def next_turn(self):
         msg = self.prepare_message({"type": "end_turn"})
@@ -328,9 +330,9 @@ class Client(SocketManager):
         msg = {"text": text, "type": "msg", "recipient": recipient_name}
         msg = self.prepare_message(msg)
         self.socket.send(msg)
-    
+
     def send_abandon(self):
-        msg = self.prepare_message({'type': "abandon", 'player': self.game.myself.name})
+        msg = self.prepare_message({"type": "abandon", "player": self.game.myself.name})
         self.socket.send(msg)
 
     def close(self):
