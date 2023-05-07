@@ -28,7 +28,6 @@ class Game:
         self.parc = 0
         self.myself = Player(self, self.settings["image"], self.settings["name"])
         self.players = []
-        self.active_players = [self.myself]
         self.popups = []
         self.dice1 = 1
         self.dice2 = 1
@@ -67,7 +66,6 @@ class Game:
     def add_player(self, address, name):
         Newplayer = Player(self, address, name)
         self.players.append(Newplayer)
-        self.active_players.append(Newplayer)
         return Newplayer
 
     def load_assets(self):
@@ -138,7 +136,6 @@ class Game:
         self.socket_manager.send_abandon()
         self.myself.position = None
         self.socket_manager.send_player(self.myself)
-        self.active_players.remove(self.myself)
         for box in Box.boxes:
             if hasattr(box, "player") and box.player == self.myself:
                 box.player = None
@@ -184,8 +181,9 @@ class Game:
             self.screen.blit(self.background, (self.width - self.height, 0))
 
             # set players
-            for player in self.active_players:
-                player.draw()
+            for player in self.players + [self.myself]:
+                if player.position is not None:
+                    player.draw()
 
             # set dices
             self.screen.blit(self.dice_image[self.dice1], self.rect_dice1)

@@ -85,7 +85,6 @@ class Server(SocketManager):
                     raise TimeoutError("failed to retrive client information")
             msg["address"] = client[1].address
             msg["name"] = client[1].name
-            self.game.active_players.append(client[1])
             self.broadcast(json.dumps(msg).encode("utf-8"), client[0])
 
     def socket_thread(self, client):
@@ -142,9 +141,6 @@ class Server(SocketManager):
 
             elif msg["type"] == "abandon":
                 self.game.okpopup(f"{msg['player']} a abandonné la partie")
-                self.game.active_players.remove(
-                    [p for p in self.game.players if p.name == msg["player"]][0]
-                )
                 self.broadcast(raw_msg, client)
 
     def next_turn(self):
@@ -309,9 +305,6 @@ class Client(SocketManager):
 
             elif msg["type"] == "abandon":
                 self.game.okpopup(f"{msg['player']} a abandonné la partie")
-                self.game.active_players.remove(
-                    [p for p in self.game.players if p.name == msg["player"]][0]
-                )
 
     def next_turn(self):
         msg = self.prepare_message({"type": "end_turn"})

@@ -747,7 +747,9 @@ class Special(Box):
                     f"Vous recevez {card['amount']} $ de {player.name}."
                 )
                 price = 0
-                for p in game.active_players:
+                for p in game.players:
+                    if p.position is None:
+                        continue
                     p.earn(card["amount"], ("Chance" if isChance else "Caisse de Communauté") + player.name )
                     game.socket_manager.send_player(p)
                     price += card["amount"]
@@ -758,7 +760,9 @@ class Special(Box):
                     f"Vous versez {card['amount']} $ à {player.name}."
                 )
                 price = 0
-                for p in game.active_players:
+                for p in game.players:
+                    if p.position is None:
+                        continue
                     p.pay(card["amount"], ("Chance" if isChance else "Caisse de Communauté") + player.name)
                     game.socket_manager.send_player(p)
                     price += card["amount"]
