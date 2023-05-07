@@ -132,7 +132,7 @@ class Server(SocketManager):
 
             elif msg["type"] == "deal":  # someone send me a deal
                 self.deal(msg)
-            
+
             elif msg["type"] == "bill":
                 if msg["player"] == self.game.myself.name:
                     self.game.bill.add(msg["amount"], msg["text"])
@@ -218,14 +218,13 @@ class Server(SocketManager):
             self.info(msg)
         else:
             self.send_private_msg(msg["text"], msg["recipient"])
-    
+
     def send_bill(self, player, amount, text):
         msg = {"text": text, "type": "bill", "player": player.name, "amount": amount}
         msg = self.prepare_message(msg)
         for client in self.clients:
             if client[1].name == player.name:
                 client[0].send(msg)
-
 
     def send_abandon(self):
         msg = self.prepare_message({"type": "abandon", "player": self.game.myself.name})
@@ -299,7 +298,7 @@ class Client(SocketManager):
 
             elif msg["type"] == "deal":  # someone send me a deal
                 self.deal(msg)
-            
+
             elif msg["type"] == "bill":
                 self.game.bill.add(msg["amount"], msg["text"])
 
@@ -340,7 +339,7 @@ class Client(SocketManager):
         msg = {"text": text, "type": "msg", "recipient": recipient_name}
         msg = self.prepare_message(msg)
         self.socket.send(msg)
-    
+
     def send_bill(self, player, amount, text):
         msg = {"text": text, "type": "bill", "player": player.name, "amount": amount}
         msg = self.prepare_message(msg)

@@ -1,6 +1,7 @@
 import pygame
 from box import Box
 
+
 class Player:
     def __init__(self, game, address, name):
         self.address = address

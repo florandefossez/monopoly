@@ -131,11 +131,21 @@ class ReceiveDeal:
             if self.yesrect.collidepoint(event.pos):
                 self.game.popups.remove(self)
                 if self.deal["request"]["money"]:
-                    self.game.myself.pay(self.deal["request"]["money"], f"Deal with {self.offerer.name}")
-                    self.offerer.earn(self.deal["request"]["money"], f"Deal with {self.game.myself.name}")
+                    self.game.myself.pay(
+                        self.deal["request"]["money"], f"Deal with {self.offerer.name}"
+                    )
+                    self.offerer.earn(
+                        self.deal["request"]["money"],
+                        f"Deal with {self.game.myself.name}",
+                    )
                 if self.deal["offer"]["money"]:
-                    self.game.myself.earn(self.deal["offer"]["money"], f"Deal with {self.offerer.name}")
-                    self.offerer.pay(self.deal["offer"]["money"], f"Deal with {self.game.myself.name}")
+                    self.game.myself.earn(
+                        self.deal["offer"]["money"], f"Deal with {self.offerer.name}"
+                    )
+                    self.offerer.pay(
+                        self.deal["offer"]["money"],
+                        f"Deal with {self.game.myself.name}",
+                    )
 
                 self.game.socket_manager.send_player(self.game.myself)
                 self.game.socket_manager.send_player(self.offerer)

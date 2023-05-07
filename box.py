@@ -405,7 +405,7 @@ class Gare(Box):
             return
         else:
             player.game.okpopup("Achat effectué")
-            player.pay(200, F"Achat {self.name}")
+            player.pay(200, f"Achat {self.name}")
             self.player = player
         self.game.socket_manager.send_box(self)
         self.game.socket_manager.send_player(self.game.myself)
@@ -414,21 +414,7 @@ class Gare(Box):
         if self.player != self.game.myself:
             self.game.okpopup("Cette propriété ne vous appartient pas", foreground=True)
             return
-
-        elif self.in_mortgage:
-            self.game.myself.earn(100, f"Vente {self.name}")
-            self.player = None
-            self.game.okpopup(
-                f"Vous avez vendu {self.name} à la banque pour 100 $", foreground=True
-            )
-        else:
-            self.game.myself.earn(200, f"Vente {self.name}")
-            self.player = None
-            self.game.okpopup(
-                f"Vous avez vendu {self.name} à la banque pour 200 $", foreground=True
-            )
-        self.game.socket_manager.send_box(self)
-        self.game.socket_manager.send_player(self.game.myself)
+        may_sell(self)
 
     def mortgage(self):
         if self.player != self.game.myself:
@@ -554,21 +540,7 @@ class Company(Box):
         if self.player != self.game.myself:
             self.game.okpopup("Cette propriété ne vous appartient pas", foreground=True)
             return
-
-        elif self.in_mortgage:
-            self.game.myself.earn(75, f"Vente {self.name}")
-            self.player = None
-            self.game.okpopup(
-                f"Vous avez vendu {self.name} à la banque pour 75 $", foreground=True
-            )
-        else:
-            self.game.myself.earn(150, f"Vente {self.name}")
-            self.player = None
-            self.game.okpopup(
-                f"Vous avez vendu {self.name} à la banque pour 150 $", foreground=True
-            )
-        self.game.socket_manager.send_box(self)
-        self.game.socket_manager.send_player(self.game.myself)
+        may_sell(self)
 
     def to_dict(self):
         return {
@@ -674,12 +646,16 @@ class Special(Box):
             case "earn":
                 game.okpopup(
                     card["text"],
-                    resolve_ok=lambda: player.earn(card["amount"], "Chance" if isChance else "Caisse de Communauté"),
+                    resolve_ok=lambda: player.earn(
+                        card["amount"], "Chance" if isChance else "Caisse de Communauté"
+                    ),
                 )
             case "pay":
                 game.okpopup(
                     card["text"],
-                    resolve_ok=lambda: player.pay(card["amount"], "Chance" if isChance else "Caisse de Communauté"),
+                    resolve_ok=lambda: player.pay(
+                        card["amount"], "Chance" if isChance else "Caisse de Communauté"
+                    ),
                 )
             case "goto":
 
@@ -737,7 +713,9 @@ class Special(Box):
                             price += box.houses * card["house"]
                         else:
                             price += card["hotel"]
-                game.okpopup(card["text"], resolve_ok=lambda: player.pay(price, "Rénovations"))
+                game.okpopup(
+                    card["text"], resolve_ok=lambda: player.pay(price, "Rénovations")
+                )
             case "get_out_of_prison":
                 player.get_out_of_prison_card += 1
                 game.okpopup(card["text"])
@@ -750,7 +728,11 @@ class Special(Box):
                 for p in game.players:
                     if p.position is None:
                         continue
-                    p.earn(card["amount"], ("Chance" if isChance else "Caisse de Communauté") + player.name )
+                    p.earn(
+                        card["amount"],
+                        ("Chance" if isChance else "Caisse de Communauté")
+                        + player.name,
+                    )
                     game.socket_manager.send_player(p)
                     price += card["amount"]
                 player.pay(price, "Chance" if isChance else "Caisse de Communauté")
@@ -763,7 +745,11 @@ class Special(Box):
                 for p in game.players:
                     if p.position is None:
                         continue
-                    p.pay(card["amount"], ("Chance" if isChance else "Caisse de Communauté") + player.name)
+                    p.pay(
+                        card["amount"],
+                        ("Chance" if isChance else "Caisse de Communauté")
+                        + player.name,
+                    )
                     game.socket_manager.send_player(p)
                     price += card["amount"]
                 player.earn(price, "Chance" if isChance else "Caisse de Communauté")
