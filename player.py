@@ -1,7 +1,6 @@
 import pygame
 from box import Box
 
-
 class Player:
     def __init__(self, game, address, name):
         self.address = address
@@ -64,11 +63,15 @@ class Player:
             )
         self.rect.topleft = destination.topleft
 
-    def pay(self, amount):
+    def pay(self, amount, text="None"):
         self.money -= amount
+        if self == self.game.myself:
+            self.game.bill.add(-amount, text)
+        else:
+            self.game.socket_manager.send_bill(self, -amount, text)
 
-    def earn(self, amount):
-        self.money += amount
+    def earn(self, amount, text="None"):
+        self.pay(-amount, text)
 
     def play(self):
         Box.boxes[self.position].play(self, self.game)

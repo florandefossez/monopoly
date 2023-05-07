@@ -90,6 +90,8 @@ class Sidebar:
                 pygame.draw.rect(self.game.screen, pygame.Color(0, 0, 0), rect)
                 rect.move_ip(0, 0.2 * l)
                 draw_bar -= 1
+        
+        self.game.bill.draw(rect)
 
         # deal button
         self.game.screen.blit(self.deal, self.deal_rect)

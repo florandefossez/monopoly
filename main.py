@@ -11,6 +11,7 @@ from card import Card
 from popup import OkPopup, YesNoPopup
 from socket_manager import SocketManager, Server, Client
 from sidebar import Sidebar
+from bill import Bill
 
 
 class Game:
@@ -33,6 +34,7 @@ class Game:
         self.dice2 = 1
         self.double_in_row = 0
         self.send_end_turn = False
+        self.bill = Bill(self)
 
         if self.settings["server"]:
             self.socket_manager = Server(self)
@@ -115,7 +117,7 @@ class Game:
         if self.myself.prison_time == 0:
             self.myself.position += self.dice1 + self.dice2
             if self.myself.position >= 40:
-                self.myself.money += 200
+                self.myself.earn(200, "Départ")
                 self.myself.position %= 40
             self.myself.update_position()
 
@@ -169,6 +171,7 @@ class Game:
                 Box.update_rect(self)
                 self.myself.update_image()
                 self.sidebar.update()
+                self.bill.update()
                 for player in self.players:
                     player.update_image()
                 for popup in self.popups:
