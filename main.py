@@ -163,6 +163,10 @@ class Game:
 
             # rescale objects if needed
             if (self.width, self.height) != self.screen.get_size():
+                if self.screen.get_width() <= self.screen.get_height():
+                    self.screen = pygame.display.set_mode(
+                        (self.screen.get_width(), self.screen.get_width()), pygame.RESIZABLE
+                    )
                 self.width, self.height = self.screen.get_size()
                 self.load_assets()
                 Box.update_rect(self)
