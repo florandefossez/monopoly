@@ -39,7 +39,7 @@ class Card:
 
     def blit_title(self, name):
         margin = 0.25
-        font = pygame.font.SysFont("calibri", 25 * self.card.get_width() // 233)
+        font = pygame.font.SysFont("calibri", 25 * self.card.get_width() // 233, True)
 
         width, height = self.card.get_size()
         y = 0.05 * height
