@@ -150,6 +150,10 @@ class Server(SocketManager):
     def next_turn(self):
         players = [self.game.myself] + self.game.players
 
+        if all([p.position is None for p in players]):
+            self.game.okpopup("Fin de Partie !")
+            return
+
         for p in players:
             p.his_turn = False
 

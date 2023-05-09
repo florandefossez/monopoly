@@ -85,16 +85,16 @@ class Sidebar:
             self.game.height / 200,
         )
         for player in [self.game.myself, *self.game.players]:
-            if player.his_turn:
-                self.game.screen.blit(player.green_image, rect.move(0.5 * l, 0))
-            elif player.position is None:
+            if player.position is None:
                 self.game.screen.blit(player.red_image, rect.move(0.5 * l, 0))
+            elif player.his_turn:
+                self.game.screen.blit(player.green_image, rect.move(0.5 * l, 0))
             else:
                 self.game.screen.blit(player.image, rect.move(0.5 * l, 0))
             money = self.font.render(
                 f"{player.money} $",
                 True,
-                pygame.Color(31, 165, 76) if player.his_turn else pygame.Color(0, 0, 0),
+                pygame.Color(31, 165, 76) if player.his_turn and player.position is not None else pygame.Color(0, 0, 0),
             )
             self.game.screen.blit(money, rect.move(6.5 * l - money.get_width(), 0))
             rect.move_ip(0, 1.05 * l)
@@ -113,7 +113,7 @@ class Sidebar:
         if self.game.myself.get_out_of_prison_card:
             self.game.screen.blit(self.get_out_of_jail, self.get_out_of_jail_rect)
 
-        self.game.screen.blit(self.font.render(str(self.game.parc), True, "black"), (0,0))
+        # self.game.screen.blit(self.font.render(str(self.game.parc), True, "black"), (0,0))
 
     def handle_event(self, event):
         if not event.type == pygame.MOUSEBUTTONDOWN:
