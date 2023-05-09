@@ -229,11 +229,11 @@ class Server(SocketManager):
         else:
             self.send_private_msg(msg["text"], msg["recipient"])
 
-    def send_bill(self, player, amount, text):
-        msg = {"text": text, "type": "bill", "player": player.name, "amount": amount}
+    def send_bill(self, player_name, amount, text):
+        msg = {"text": text, "type": "bill", "player": player_name, "amount": amount}
         msg = self.prepare_message(msg)
         for client in self.clients:
-            if client[1].name == player.name:
+            if client[1].name == player_name:
                 client[0].send(msg)
 
     def send_abandon(self):
@@ -358,8 +358,8 @@ class Client(SocketManager):
         msg = self.prepare_message(msg)
         self.socket.send(msg)
 
-    def send_bill(self, player, amount, text):
-        msg = {"text": text, "type": "bill", "player": player.name, "amount": amount}
+    def send_bill(self, player_name, amount, text):
+        msg = {"text": text, "type": "bill", "player": player_name, "amount": amount}
         msg = self.prepare_message(msg)
         self.socket.send(msg)
 

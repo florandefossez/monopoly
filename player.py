@@ -69,7 +69,7 @@ class Player:
         if self == self.game.myself:
             self.game.bill.add(-amount, text)
         else:
-            self.game.socket_manager.send_bill(self, -amount, text)
+            self.game.socket_manager.send_bill(self.name, -amount, text)
 
     def earn(self, amount, text="None"):
         self.pay(-amount, text)
