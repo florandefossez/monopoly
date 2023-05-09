@@ -129,6 +129,10 @@ class Server(SocketManager):
             elif msg["type"] == "dice":  # the client tossed the dices
                 self.update_dice(msg)
                 self.broadcast(raw_msg, client)
+            
+            elif msg["type"] == "parc":
+                self.game.parc = msg["amount"]
+                self.broadcast(raw_msg, client)
 
             elif msg["type"] == "deal":  # someone send me a deal
                 self.deal(msg)
@@ -184,6 +188,12 @@ class Server(SocketManager):
 
     def send_dice(self):
         msg = {"type": "dice", "dice1": self.game.dice1, "dice2": self.game.dice2}
+        msg = self.prepare_message(msg)
+        for client in self.clients:
+            client[0].send(msg)
+    
+    def send_parc(self):
+        msg = {"type": "parc", "amount": self.game.parc}
         msg = self.prepare_message(msg)
         for client in self.clients:
             client[0].send(msg)
@@ -295,6 +305,9 @@ class Client(SocketManager):
 
             elif msg["type"] == "dice":  # someone tossed the dices
                 self.update_dice(msg)
+            
+            elif msg["type"] == "parc":
+                self.game.parc = msg["amount"]
 
             elif msg["type"] == "deal":  # someone send me a deal
                 self.deal(msg)
@@ -323,6 +336,11 @@ class Client(SocketManager):
 
     def send_dice(self):
         msg = {"type": "dice", "dice1": self.game.dice1, "dice2": self.game.dice2}
+        msg = self.prepare_message(msg)
+        self.socket.send(msg)
+    
+    def send_parc(self):
+        msg = {"type": "parc", "amount": self.game.parc}
         msg = self.prepare_message(msg)
         self.socket.send(msg)
 

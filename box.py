@@ -587,7 +587,6 @@ class Special(Box):
             case "impots":
                 player.pay(200, "Impôts")
                 game.parc += 200
-                # Manage parc socket update
             case "chance":
                 self.playcard(player, game, True)
             case "prison":
@@ -596,7 +595,6 @@ class Special(Box):
                 player.earn(game.parc, "Parc gratuit")
                 game.okpopup(f"Vous touchez {game.parc} $ du parc gratuit !")
                 game.parc = 0
-                # Manage parc socket update
             case "go_to_prison":
                 game.socket_manager.send_player(player)
                 player.prison_time = 2
@@ -607,6 +605,7 @@ class Special(Box):
                 player.pay(100, "Taxes")
                 game.okpopup("Payez 100 $ de taxes")
                 game.parc += 100
+        self.game.socket_manager.send_parc()
 
     def prison(self, player, game):
         if player.prison_time == 0:
@@ -651,6 +650,7 @@ class Special(Box):
                     ),
                 )
             case "pay":
+                game.parc += card["amount"]
                 game.okpopup(
                     card["text"],
                     resolve_ok=lambda: player.pay(

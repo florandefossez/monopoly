@@ -113,6 +113,8 @@ class Sidebar:
         if self.game.myself.get_out_of_prison_card:
             self.game.screen.blit(self.get_out_of_jail, self.get_out_of_jail_rect)
 
+        self.game.screen.blit(self.font.render(str(self.game.parc), True, "black"), (0,0))
+
     def handle_event(self, event):
         if not event.type == pygame.MOUSEBUTTONDOWN:
             return
