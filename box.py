@@ -628,6 +628,7 @@ class Special(Box):
         if pay:
             player.pay(50, "Prison")
             game.parc += 50
+            game.socket_manager.send_parc()
         else:
             player.get_out_of_prison_card -= 1
         player.prison_time = 0
@@ -690,6 +691,8 @@ class Special(Box):
             case "next_company":
 
                 def goto(player, game, card):
+                    if player.position >= 28:
+                        player.earn(200, "Départ")
                     player.position = 28 if player.position in range(12, 28) else 12
                     player.update_position()
                     game.socket_manager.send_player(player)
@@ -730,7 +733,7 @@ class Special(Box):
                         continue
                     p.earn(
                         card["amount"],
-                        ("Chance" if isChance else "Caisse de Communauté")
+                        ("Chance " if isChance else "Caisse de Communauté ")
                         + player.name,
                     )
                     game.socket_manager.send_player(p)
@@ -747,7 +750,7 @@ class Special(Box):
                         continue
                     p.pay(
                         card["amount"],
-                        ("Chance" if isChance else "Caisse de Communauté")
+                        ("Chance " if isChance else "Caisse de Communauté ")
                         + player.name,
                     )
                     game.socket_manager.send_player(p)
