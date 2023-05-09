@@ -46,6 +46,18 @@ class Sidebar:
         # players money font
         self.font = pygame.font.SysFont("calibri", self.game.height // 20)
 
+        # get out of jail
+        self.get_out_of_jail_rect = pygame.Rect(
+            2/3*(self.game.width - self.game.height),
+            -2/9*self.game.width + 11/9*self.game.height,
+            1/4*(self.game.width - self.game.height),
+            1/6*(self.game.width - self.game.height)
+        )
+        self.get_out_of_jail = pygame.transform.smoothscale(
+            pygame.image.load("assets/get_out_of_jail.png"),
+            self.get_out_of_jail_rect.size
+        )
+
     def draw(self):
         # background
         self.game.screen.blit(self.sidebar, (0, 0))
@@ -96,6 +108,10 @@ class Sidebar:
         # deal button
         self.game.screen.blit(self.deal, self.deal_rect)
         self.game.screen.blit(self.abandon, self.abandon_rect)
+
+        # jet out of jail
+        if self.game.myself.get_out_of_prison_card:
+            self.game.screen.blit(self.get_out_of_jail, self.get_out_of_jail_rect)
 
     def handle_event(self, event):
         if not event.type == pygame.MOUSEBUTTONDOWN:
