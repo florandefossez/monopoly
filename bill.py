@@ -33,7 +33,7 @@ class Bill:
         self.update()
 
     def update(self):
-        self.font = pygame.font.SysFont("calibri", int(self.game.height // 35))
+        self.font = pygame.font.Font("assets/custom.otf", int(self.game.height // 35))
         self.rect = pygame.Rect(
             (self.game.width - self.game.height) / 4,
             0,

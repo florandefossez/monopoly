@@ -44,7 +44,7 @@ class Sidebar:
         )
 
         # players money font
-        self.font = pygame.font.SysFont("calibri", self.game.height // 20)
+        self.font = pygame.font.Font("assets/custom.otf", self.game.height // 20)
 
         # get out of jail
         self.get_out_of_jail_rect = pygame.Rect(

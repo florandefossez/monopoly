@@ -444,7 +444,7 @@ class Gare(Box):
     def to_dict(self):
         return {
             "n": self.n,
-            "player": self.player.name if self.player is not None else "No_one",
+            "player": self.player.name if self.player is not None else None,
             "in_mortgage": self.in_mortgage,
         }
 
@@ -452,17 +452,16 @@ class Gare(Box):
         if data["n"] != self.n:
             raise (Exception("Error in box update"))
         if "player" in data:
-            if data["player"] == "No_one":
+            if data["player"] is None:
                 self.player = None
             elif data["player"] == self.game.myself.name:
                 self.player = self.game.myself
             else:
-                player = [
+                self.player = [
                     player
                     for player in self.game.players
                     if player.name == data["player"]
                 ][0]
-                self.player = player
         if "in_mortgage" in data:
             self.in_mortgage = data["in_mortgage"]
 
@@ -775,10 +774,10 @@ def may_sell(box):
 
 def sell_to_bank(box):
     if box.in_mortgage:
-        box.game.myself.earn(box.base_price / 2, f"Vente {box.name}")
+        box.game.myself.earn(box.base_price // 2, f"Vente {box.name}")
         box.player = None
         box.game.okpopup(
-            f"Vous avez vendu {box.name} à la banque pour {box.base_price/2} $",
+            f"Vous avez vendu {box.name} à la banque pour {box.base_price//2} $",
             foreground=True,
         )
     else:

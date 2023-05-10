@@ -101,7 +101,7 @@ class StreetCard(Card):
         # card, title, closeRect
         super().update()
         width, height = self.card.get_size()
-        font = pygame.font.SysFont("calibri", 20 * width // 233)
+        font = pygame.font.Font("assets/custom.otf", 20 * width // 233)
         # display prices
         i = 0
         for price in self.box.rent:
@@ -233,7 +233,7 @@ class CompanyCard(Card):
     def update(self):
         super().update()
         width, height = self.card.get_size()
-        font = pygame.font.SysFont("calibri", 20 * width // 233)
+        font = pygame.font.Font("assets/custom.otf", 20 * width // 233)
         # display prices
         i = 0
         for t in CompanyCard.text:

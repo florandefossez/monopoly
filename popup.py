@@ -9,7 +9,7 @@ class Popup:
             pygame.image.load("assets/popup.png"),
             (0.5 * game.height, 0.3 * game.height),
         )
-        self.font = pygame.font.SysFont("calibri", 8 * self.game.height // 233)
+        self.font = pygame.font.Font("assets/custom.otf", 8 * self.game.height // 233)
         self.blit_text()
 
     def blit_text(self):
@@ -41,7 +41,7 @@ class Popup:
             pygame.image.load("assets/popup.png"),
             (0.5 * self.game.height, 0.3 * self.game.height),
         )
-        self.font = pygame.font.SysFont("calibri", 8 * self.game.height // 233)
+        self.font = pygame.font.Font("assets/custom.otf", 8 * self.game.height // 233)
         self.blit_text()
 
 
