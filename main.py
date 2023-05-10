@@ -1,7 +1,7 @@
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import json
-import sys
-import time
 import argparse
 from random import randint
 
@@ -17,10 +17,9 @@ from bill import Bill
 class Game:
     r = 1.6
 
-    def __init__(self):
+    def __init__(self, settings):
         self.running = True
-        with open(args.path, "r") as f:
-            self.settings = json.load(f)
+        self.settings = settings
 
         self.width = 1280
         self.height = 720
@@ -237,11 +236,64 @@ class Game:
         pygame.quit()
 
 
+def get_settings():
+    settings = {}
+
+    isServer = None
+    while isServer not in ["c", "j"]:
+        isServer = input("Rejoindre ou créer une partie ?\nTapez [c] pour créer ou [j] pour rejoindre\n")
+    settings["server"] = isServer == "c"
+
+    if isServer:
+        n_clients = "a"
+        while not n_clients.isdecimal():
+            n_clients = input("Combien de joueurs attendez vous ?\n")
+        settings["n_client"] = int(n_clients)
+
+        ip = ""
+        while not ip:
+            ip = input("Sur quelle adresse IP voulez-vous servir la partie ?\n")
+        settings["local_ip"] = ip
+
+        port = "a"
+        while not port.isdecimal():
+            port = input("Sur quel port voulez vous servir la partie ?\n")
+        settings["local_port"] = int(port)
+    
+    else:
+        ip = ""
+        while not ip:
+            ip = input("Sur quelle adresse IP la partie est-elle servie ?\n")
+        settings["remote_ip"] = ip
+
+        port = "a"
+        while not port.isdecimal():
+            port = input("Sur quel port la partie est-elle servie ?\n")
+        settings["remote_port"] = int(port)
+
+    image = None
+    while image not in ["hat", "boat", "car", "dog"]:
+        image = input("Choisissez votre pion parmi [hat, boat, car, dog]\n")
+    settings["image"] = image
+
+    name = ""
+    while not name:
+        name = input("Entrez un pseudo\n")
+    settings["name"] = name
+
+    return settings
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", dest="path", default="settings.json")
+    parser.add_argument("-p", dest="path", default=None)
     args = parser.parse_args()
 
+    if args.path is None:
+        settings = get_settings()
+    else:
+        with open(args.path, "r") as f:
+            settings = json.load(f)
+
     pygame.init()
-    game = Game()
+    game = Game(settings)
     game.run()
