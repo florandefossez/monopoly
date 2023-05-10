@@ -9,7 +9,7 @@ class Player:
         Player.game = game
         self.position = 0
         self.box = Box.boxes[0]
-        self.money = 20000
+        self.money = 1500
         self.prison_time = 0
         self.frame = []
         self.update_image()

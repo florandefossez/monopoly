@@ -1,6 +1,7 @@
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
+import socket
 import json
 import argparse
 from random import randint
@@ -242,17 +243,18 @@ def get_settings():
     isServer = None
     while isServer not in ["c", "j"]:
         isServer = input("Rejoindre ou créer une partie ?\nTapez [c] pour créer ou [j] pour rejoindre\n")
-    settings["server"] = isServer == "c"
+    isServer = isServer == "c"
+    settings["server"] = isServer
 
     if isServer:
         n_clients = "a"
         while not n_clients.isdecimal():
-            n_clients = input("Combien de joueurs attendez vous ?\n")
+            n_clients = input("Combien de participants attendez vous ?\n")
         settings["n_client"] = int(n_clients)
 
         ip = ""
         while not ip:
-            ip = input("Sur quelle adresse IP voulez-vous servir la partie ?\n")
+            ip = input(f"Sur quelle adresse IP voulez-vous servir la partie ? (Votre IP local est {socket.gethostbyname(socket.gethostname())})\n")
         settings["local_ip"] = ip
 
         port = "a"
