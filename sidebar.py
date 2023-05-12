@@ -127,7 +127,7 @@ class Sidebar:
                 )
         if self.abandon_rect.collidepoint(event.pos):
             self.game.yesnopopup(
-                "Etes-vous sûr de vouloir abodonner la partie ?",
+                "Etes-vous sûr de vouloir abandonner la partie ?",
                 resolve_no=lambda: None,
                 resolve_yes=self.game.end,
             )
