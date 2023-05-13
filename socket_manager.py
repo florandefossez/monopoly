@@ -5,6 +5,7 @@ from player import Player
 from box import Box, Street, Gare, Company, Special
 from receiveDeal import ReceiveDeal
 import pygame
+import sys
 
 HEADER = 4
 
@@ -60,6 +61,7 @@ class Server(SocketManager):
         )
         connected_player = 0
         self.socket.listen(5)
+        print("En attente de connexion...")
         while connected_player < self.game.settings["n_client"]:
             (clientsocket, address) = self.socket.accept()
             self.clients.append([clientsocket, None])
@@ -89,7 +91,17 @@ class Server(SocketManager):
 
     def socket_thread(self, client):
         while self.game.running:
-            header = client.recv(HEADER)
+            try:
+                header = client.recv(HEADER)
+            except:
+                if not self.game.running:
+                    return
+                c = [c for c in self.clients if c[0] == client][0]
+                self.clients.remove(c)
+                if c[1] is not None:
+                    self.end(c[1])
+                    print(f"Erreur de connexion {c[1].name} a quitté la partie")
+                return
             if not header:
                 continue
             try:
@@ -104,6 +116,7 @@ class Server(SocketManager):
 
             if msg["type"] == "presentation":  # first message from client
                 p = self.game.add_player(msg["address"], msg["name"])
+                print(f"{msg['name']} a rejoint la partie !")
                 for c in self.clients:
                     if c[0] == client:
                         c[1] = p
@@ -129,7 +142,7 @@ class Server(SocketManager):
             elif msg["type"] == "dice":  # the client tossed the dices
                 self.update_dice(msg)
                 self.broadcast(raw_msg, client)
-            
+
             elif msg["type"] == "parc":
                 self.game.parc = msg["amount"]
                 self.broadcast(raw_msg, client)
@@ -146,6 +159,7 @@ class Server(SocketManager):
             elif msg["type"] == "abandon":
                 self.game.okpopup(f"{msg['player']} a abandonné la partie")
                 self.broadcast(raw_msg, client)
+                self.end([p for p in self.game.players if p.name == msg["name"]][0])
 
     def next_turn(self):
         players = [self.game.myself] + self.game.players
@@ -168,6 +182,21 @@ class Server(SocketManager):
 
         for client in self.clients:
             client[0].send(msg)
+
+    def end(self, player):
+        player.position = None
+        self.send_player(player)
+        for box in Box.boxes:
+            if hasattr(box, "player") and box.player == player:
+                box.player = None
+                box.in_mortgage = False
+                if hasattr(box, "houses"):
+                    box.houses = 0
+                self.send_box(box)
+        if player.his_turn:
+            player.his_turn = False
+            self.send_end_turn = False
+            self.next_turn()
 
     def broadcast(self, raw_msg, source):
         header = str(len(raw_msg)).encode("utf-8").rjust(HEADER, b"0")
@@ -195,7 +224,7 @@ class Server(SocketManager):
         msg = self.prepare_message(msg)
         for client in self.clients:
             client[0].send(msg)
-    
+
     def send_parc(self):
         msg = {"type": "parc", "amount": self.game.parc}
         msg = self.prepare_message(msg)
@@ -242,6 +271,8 @@ class Server(SocketManager):
 
     def send_abandon(self):
         msg = self.prepare_message({"type": "abandon", "player": self.game.myself.name})
+        self.end(self.game.myself)
+
         for client in self.clients:
             client[0].send(msg)
         if self.game.myself.his_turn:
@@ -256,20 +287,36 @@ class Client(SocketManager):
     def __init__(self, game):
         super().__init__(game)
 
-        self.socket.connect(
-            (self.game.settings["remote_ip"], self.game.settings["remote_port"])
-        )
+        self.start = False
+        try:
+            self.socket.connect(
+                (self.game.settings["remote_ip"], self.game.settings["remote_port"])
+            )
+        except:
+            print("La connexion a échoué")
+            self.game.running = False
+            sys.exit(1)
+
         msg = {
             "type": "presentation",
             "address": self.game.settings["image"],
             "name": self.game.settings["name"],
         }
         self.socket.send(self.prepare_message(msg))
+        print("Partie trouvé !")
+        print("En attente des autres joueurs...")
         threading.Thread(target=self.socket_thread, args=(self.socket,)).start()
+        while not self.start:
+            pygame.time.wait(500)
 
     def socket_thread(self, server):
         while self.game.running:
-            header = server.recv(HEADER)
+            try:
+                header = server.recv(HEADER)
+            except:
+                print("Erreur de connexion")
+                self.game.running = False
+                sys.exit(1)
             if not header:
                 continue
             try:
@@ -284,6 +331,7 @@ class Client(SocketManager):
 
             if msg["type"] == "presentation":  # server send new player
                 self.game.add_player(msg["address"], msg["name"])
+                self.start = True
 
             elif msg["type"] == "new_turn":  # new turn
                 for p in self.game.players:
@@ -309,7 +357,7 @@ class Client(SocketManager):
 
             elif msg["type"] == "dice":  # someone tossed the dices
                 self.update_dice(msg)
-            
+
             elif msg["type"] == "parc":
                 self.game.parc = msg["amount"]
 
@@ -342,7 +390,7 @@ class Client(SocketManager):
         msg = {"type": "dice", "dice1": self.game.dice1, "dice2": self.game.dice2}
         msg = self.prepare_message(msg)
         self.socket.send(msg)
-    
+
     def send_parc(self):
         msg = {"type": "parc", "amount": self.game.parc}
         msg = self.prepare_message(msg)

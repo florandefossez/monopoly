@@ -1,5 +1,6 @@
 import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 import pygame
 import socket
 import json
@@ -132,22 +133,6 @@ class Game:
         # send_updates for position
         self.socket_manager.send_player(self.myself)
 
-    def end(self):
-        self.socket_manager.send_abandon()
-        self.myself.position = None
-        self.socket_manager.send_player(self.myself)
-        for box in Box.boxes:
-            if hasattr(box, "player") and box.player == self.myself:
-                box.player = None
-                box.in_mortgage = False
-                if hasattr(box, "houses"):
-                    box.houses = 0
-                self.socket_manager.send_box(box)
-        if self.myself.his_turn:
-            self.myself.his_turn = False
-            self.send_end_turn = False
-            self.socket_manager.next_turn()
-
     def run(self):
         while self.running:
             self.clock.tick(60)
@@ -165,7 +150,8 @@ class Game:
             if (self.width, self.height) != self.screen.get_size():
                 if self.screen.get_width() <= self.screen.get_height():
                     self.screen = pygame.display.set_mode(
-                        (self.screen.get_width(), self.screen.get_width()), pygame.RESIZABLE
+                        (self.screen.get_width(), self.screen.get_width()),
+                        pygame.RESIZABLE,
                     )
                 self.width, self.height = self.screen.get_size()
                 self.load_assets()
@@ -242,7 +228,9 @@ def get_settings():
 
     isServer = None
     while isServer not in ["c", "j"]:
-        isServer = input("Rejoindre ou créer une partie ?\nTapez [c] pour créer ou [j] pour rejoindre\n")
+        isServer = input(
+            "Rejoindre ou créer une partie ?\nTapez [c] pour créer ou [j] pour rejoindre\n"
+        )
     isServer = isServer == "c"
     settings["server"] = isServer
 
@@ -254,14 +242,16 @@ def get_settings():
 
         ip = ""
         while not ip:
-            ip = input(f"Sur quelle adresse IP voulez-vous servir la partie ? (Votre IP local est {socket.gethostbyname(socket.gethostname())})\n")
+            ip = input(
+                f"Sur quelle adresse IP voulez-vous servir la partie ? (Votre IP local est {socket.gethostbyname(socket.gethostname())})\n"
+            )
         settings["local_ip"] = ip
 
         port = "a"
         while not port.isdecimal():
             port = input("Sur quel port voulez vous servir la partie ?\n")
         settings["local_port"] = int(port)
-    
+
     else:
         ip = ""
         while not ip:
@@ -284,6 +274,7 @@ def get_settings():
     settings["name"] = name
 
     return settings
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

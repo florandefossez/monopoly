@@ -48,14 +48,14 @@ class Sidebar:
 
         # get out of jail
         self.get_out_of_jail_rect = pygame.Rect(
-            2/3*(self.game.width - self.game.height),
-            -2/9*self.game.width + 11/9*self.game.height,
-            1/4*(self.game.width - self.game.height),
-            1/6*(self.game.width - self.game.height)
+            2 / 3 * (self.game.width - self.game.height),
+            -2 / 9 * self.game.width + 11 / 9 * self.game.height,
+            1 / 4 * (self.game.width - self.game.height),
+            1 / 6 * (self.game.width - self.game.height),
         )
         self.get_out_of_jail = pygame.transform.smoothscale(
             pygame.image.load("assets/get_out_of_jail.png"),
-            self.get_out_of_jail_rect.size
+            self.get_out_of_jail_rect.size,
         )
 
     def draw(self):
@@ -94,7 +94,9 @@ class Sidebar:
             money = self.font.render(
                 f"{player.money} $",
                 True,
-                pygame.Color(31, 165, 76) if player.his_turn and player.position is not None else pygame.Color(0, 0, 0),
+                pygame.Color(31, 165, 76)
+                if player.his_turn and player.position is not None
+                else pygame.Color(0, 0, 0),
             )
             self.game.screen.blit(money, rect.move(6.5 * l - money.get_width(), 0))
             rect.move_ip(0, 1.05 * l)
@@ -129,5 +131,5 @@ class Sidebar:
             self.game.yesnopopup(
                 "Etes-vous sûr de vouloir abandonner la partie ?",
                 resolve_no=lambda: None,
-                resolve_yes=self.game.end,
+                resolve_yes=self.game.socket_manager.send_abandon,
             )
